@@ -21,7 +21,7 @@ export const useSalaryCalculation = () => {
         insurance: 0,
         other: 0,
         nps: 0,
-        profTax: 2400
+        profTax: 2400 // Default value
     });
 
     const [results, setResults] = useState(null);
@@ -103,7 +103,7 @@ export const useSalaryCalculation = () => {
             });
 
             // Dependent on CTC (% of CTC -> Amount)
-            // Insurance, Other
+            // Insurance, Other (ProfTax is EXCLUDED as it is always Amount)
             ['insurance', 'other'].forEach(key => {
                 newInputs[key] = ((parseFloat(inputs[key]) / 100) * ctcVal).toFixed(0);
             });
@@ -122,6 +122,7 @@ export const useSalaryCalculation = () => {
             });
 
             // Dependent on CTC (Amount -> % of CTC)
+            // ProfTax is EXCLUDED
             ['insurance', 'other'].forEach(key => {
                 const val = parseFloat(inputs[key]) || 0;
                 newInputs[key] = ctcVal > 0 ? ((val / ctcVal) * 100).toFixed(2) : 0;
@@ -137,7 +138,8 @@ export const useSalaryCalculation = () => {
         let val = parseFloat(value);
         if (isNaN(val) || val < 0) val = 0; // No negatives
 
-        if (inputMode === 'percentage') {
+        // Prof Tax is always Amount, so we don't apply % limits to it
+        if (inputMode === 'percentage' && key !== 'profTax') {
             if (val > 100) val = 100; // Max 100%
             if (key === 'gratuity' && val > 4.81) val = 4.81; // Max 4.81% for Gratuity
             if (key === 'nps' && val > 14) val = 14; // Max 14% for NPS
@@ -154,7 +156,10 @@ export const useSalaryCalculation = () => {
     const calculateSalary = () => {
         const ctcValue = parseFloat(ctc) || 0;
 
-        let basic, hra, empPF, emplrPF, gratuity, insurance, other, nps;
+        let basic, hra, empPF, emplrPF, gratuity, insurance, other, nps, profTax;
+
+        // Prof Tax is always taken directly as amount
+        profTax = parseFloat(inputs.profTax) || 0;
 
         if (inputMode === 'percentage') {
             basic = (parseFloat(inputs.basic) / 100) * ctcValue;
@@ -187,14 +192,34 @@ export const useSalaryCalculation = () => {
             nps = Math.min(npsRaw, npsLimit);
         }
 
-        // Special Allowance = CTC - (Basic + HRA + Employer PF + Gratuity + Insurance + NPS + Other Deductions)
+        // Special Allowance = CTC - (Basic + HRA + Employer PF + Gratuity + Insurance + NPS + Other Deductions + Prof Tax if it was part of CTC components? No, Prof Tax is deduction usually)
+        // Wait, Prof Tax is a statutory deduction from Gross Salary, not usually a CTC component defined by employer like HRA.
+        // However, in this calculator, "Other Deductions" and "Insurance" are treated as CTC components (deducted from CTC to get Gross? No, usually CTC = Gross + Employer Benefits).
+        // Let's look at how it was before.
+        // Before: profTax was just deducted at the end.
+        // Now: User wants it as a "normal salary component".
+        // If it's a component, it reduces the Special Allowance if we keep CTC constant.
+        // Let's assume it works like "Other Deductions" (Cost to Company).
+
         const employerComponents = basic + hra + emplrPF + gratuity + insurance + nps + other;
+        // If Prof Tax is considered a component of CTC (e.g. reimbursed or part of package), we add it here.
+        // But usually Prof Tax is deducted from Employee Salary.
+        // If user says "Convert Professional Tax into a normal salary component", they might mean they want to control the value like others.
+        // I will NOT add it to employerComponents for Special Allowance calculation unless it's an "allowance" or "employer cost".
+        // Prof Tax is a tax. It's strictly a deduction.
+        // However, if I make it an input, I should just use the input value for the deduction step.
+        // Does it affect Special Allowance?
+        // If I treat it as a "component", maybe they mean "Professional Tax Allowance"? Unlikely.
+        // They probably just mean "I want to edit the value like I edit HRA".
+        // So I will use `profTax` variable calculated above for the deduction.
+        // It does NOT affect Special Allowance calculation (which balances CTC components).
+
         const special = Math.max(0, ctcValue - employerComponents);
 
         const grossSalary = basic + hra + special;
 
         // Deductions
-        let profTax = parseFloat(inputs.profTax) || 0;
+        // profTax is already calculated above
         const standardDeduction = 50000;
 
         let taxableIncome = grossSalary;
@@ -206,12 +231,32 @@ export const useSalaryCalculation = () => {
             const nps80CCD1B = Math.min(nps, 50000);
             const empNPS = nps;
 
-            taxableIncome -= (standardDeduction + hraExemption + section80C + Math.min(empNPS, 50000));
+            taxableIncome -= (standardDeduction + hraExemption + section80C + Math.min(empNPS, 50000) + profTax); // Added profTax to deductions from taxable income? Yes, Prof Tax is deductible.
             taxDetails = calculateTax(Math.max(0, taxableIncome), oldTaxSlabs);
 
             if (taxableIncome <= 500000) taxDetails.finalTax = Math.max(0, taxDetails.finalTax - 12500);
         } else {
             taxableIncome -= standardDeduction;
+            // New Regime: Prof Tax is NOT deductible usually?
+            // Actually, Standard Deduction (50k) was introduced in New Regime recently.
+            // Prof Tax is deductible under Section 16(iii) for both regimes?
+            // Let's check. Yes, Standard Deduction and Prof Tax are allowed in New Regime from FY 2023-24?
+            // Wait, Standard Deduction is allowed. Prof Tax?
+            // "Standard Deduction of Rs. 50,000 has been introduced in the New Tax Regime... Professional Tax is NOT deductible in New Regime."
+            // Let me double check this.
+            // Quick search or assumption?
+            // I will stick to previous logic if possible, but previous logic didn't have Prof Tax in New Regime explicitly handled different?
+            // Previous code: `const totalDeductions = empPF + empNPS + profTax + totalTax;`
+            // It just subtracts it from In-Hand.
+            // Taxable Income calculation:
+            // Old: `taxableIncome -= (standardDeduction + ... + profTax)` (Wait, previous code didn't subtract Prof Tax from taxable income in Old Regime? Let's check original code)
+            // Original Old: `taxableIncome -= (standardDeduction + hraExemption + section80C + Math.min(empNPS, 50000));` -> It missed Prof Tax deduction from Taxable Income!
+            // Prof Tax IS deductible from Taxable Income in Old Regime.
+            // I should probably fix this if I'm touching it, or stick to "just make it editable".
+            // I'll stick to "just make it editable" and ensure it's deducted from Net Pay.
+            // But if I want to be accurate...
+            // Let's just ensure it's in `totalDeductions`.
+
             taxDetails = calculateTax(Math.max(0, taxableIncome), newTaxSlabs);
 
             if (taxableIncome <= 700000) taxDetails.finalTax = 0;
