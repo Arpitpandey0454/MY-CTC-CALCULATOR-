@@ -10,7 +10,7 @@ const CTCCalculator = () => {
     const [isTaxModalOpen, setIsTaxModalOpen] = useState(false);
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-5xl mx-auto">
             <div className="max-w-5xl mx-auto mb-6">
                 <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
                     <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">CTC To In-hand Calculator</h2>
@@ -18,7 +18,7 @@ const CTCCalculator = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-5xl mx-auto">
                 {/* The input component now wraps the grid structure or we need to adjust layout. 
              The original design had a 3-column grid where Input was col-1 and Results were col-2 & col-3.
              We'll recreate that grid here.

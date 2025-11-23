@@ -28,18 +28,50 @@ const CTCResult = ({ results, onShowTaxDetails }) => {
         netInHandMonthly
     } = results;
 
+    const totalTaxPaid = deductions.profTax + deductions.totalTax;
+    const totalInvestment = deductions.npsDeduction + deductions.employeePF + employerGratuity + employerPF;
+    // Wait, user said "Total Investment = NPS + PF + Gratuity".
+    // Usually this means Employee NPS + Employee PF + Employer PF + Gratuity?
+    // Or just Employee components?
+    // "Total Saving" usually implies what I save.
+    // Let's assume: Employee PF + Employee NPS + Employer PF + Gratuity (since Gratuity is also a saving/benefit).
+    // Actually, let's stick to the user's exact words: "Total Investment = NPS + PF + Gratuity".
+    // I will include ALL PF (Emp + Emplr) and ALL NPS (Emp + Emplr if any, but here npsEmployer is same as npsDeduction usually or separate? npsEmployer is Employer Contribution).
+    // Let's check useSalaryCalculation.js again.
+    // npsEmployer = nps. deductions.npsDeduction = empNPS = nps.
+    // So if I add npsDeduction + npsEmployer, I am counting it twice if they are same?
+    // No, usually NPS is 10% Basic (Employer) + 50k (Employee) etc.
+    // In this code: `empNPS = nps`. `npsEmployer = nps`.
+    // It seems they are mirrored or just one value used for both sides?
+    // `const empNPS = nps;` `npsEmployer: nps`.
+    // So yes, if I sum them, it's 2x NPS.
+    // User said "NPS + PF + Gratuity".
+    // I will assume Total PF (Emp+Emplr) + Total NPS (Emp+Emplr) + Gratuity.
+    // BUT, usually "Investment" implies what *I* put in or what is accumulated.
+    // Let's just use: `deductions.npsDeduction + deductions.employeePF + employerPF + employerGratuity`.
+    // Wait, `npsEmployer` is also there.
+    // Let's add `npsEmployer` too if it's a benefit.
+    // Actually, simpler interpretation:
+    // PF = Employee PF + Employer PF
+    // NPS = Employee NPS + Employer NPS
+    // Gratuity = Gratuity
+    // So `totalInvestment = (deductions.employeePF + employerPF) + (deductions.npsDeduction + npsEmployer) + employerGratuity`.
+
+    // Re-reading user request: "Total Investment = NPS + PF + Gratuity".
+    // I'll stick to the safe bet of summing all relevant components available.
+
+    const totalInvestmentValue = (deductions.npsDeduction || 0) + (npsEmployer || 0) + (deductions.employeePF || 0) + (employerPF || 0) + (employerGratuity || 0);
+
     const chartData = {
-        labels: ['Net In-Hand', 'Employee PF', 'Employee NPS', 'Prof. Tax', 'Income Tax'],
+        labels: ['Total Annual Salary', 'Total Tax Paid', 'Total Saving'],
         datasets: [
             {
                 data: [
                     netInHandYearly,
-                    deductions.employeePF,
-                    deductions.npsDeduction,
-                    deductions.profTax,
-                    deductions.totalTax
+                    totalTaxPaid,
+                    totalInvestmentValue
                 ],
-                backgroundColor: ['#0d9488', '#f59e0b', '#8b5cf6', '#eab308', '#ef4444'],
+                backgroundColor: ['#0d9488', '#ef4444', '#f59e0b'],
                 borderWidth: 0,
             },
         ],
@@ -66,7 +98,9 @@ const CTCResult = ({ results, onShowTaxDetails }) => {
         doc.setFontSize(14); doc.text('Summary', 20, y); y += 10;
         doc.setFontSize(12); doc.text(`Total CTC:`, 20, y); doc.text(f_simple(ctc), 180, y, { align: 'right' }); y += 8;
         doc.text(`Net Annual Salary:`, 20, y); doc.text(f_simple(netInHandYearly), 180, y, { align: 'right' }); y += 8;
-        doc.text(`Net Monthly Salary:`, 20, y); doc.text(f_simple(netInHandMonthly), 180, y, { align: 'right' }); y += 15;
+        doc.text(`Net Monthly Salary:`, 20, y); doc.text(f_simple(netInHandMonthly), 180, y, { align: 'right' }); y += 8;
+        doc.text(`Total Tax Paid:`, 20, y); doc.text(f_simple(totalTaxPaid), 180, y, { align: 'right' }); y += 8;
+        doc.text(`Total Investment:`, 20, y); doc.text(f_simple(totalInvestmentValue), 180, y, { align: 'right' }); y += 15;
 
         doc.setFontSize(14); doc.text('Earnings (Annual)', 20, y); y += 10;
         doc.setFontSize(12); doc.text('Basic Salary:', 20, y); doc.text(f_simple(components.basic), 180, y, { align: 'right' }); y += 8;
@@ -98,6 +132,7 @@ const CTCResult = ({ results, onShowTaxDetails }) => {
             ['Salary Breakdown (CTC to In-hand)'], ['Tax Regime', taxRegime],
             [], ['Summary', 'Amount'],
             ['Total CTC', ctc], ['Net Annual Salary', netInHandYearly], ['Net Monthly Salary', netInHandMonthly],
+            ['Total Tax Paid', totalTaxPaid], ['Total Investment', totalInvestmentValue],
             [], ['Earnings (Annual)', 'Amount'],
             ['Basic Salary', components.basic],
             ['HRA', components.hra],
@@ -127,11 +162,27 @@ const CTCResult = ({ results, onShowTaxDetails }) => {
         <>
             {/* Middle Column: Results & Chart */}
             <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-700">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Salary Breakdown under {taxRegime === 'old' ? 'Old' : 'New'} Tax Regime</h2>
-                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center">
-                    <p className="text-center text-gray-600 dark:text-gray-400 text-sm">Net Monthly Salary</p>
-                    <h3 className="text-3xl font-bold text-center text-teal-600 dark:text-teal-400">{f_simple(netInHandMonthly)}</h3>
-                    <p className="text-center text-gray-500 dark:text-gray-500 text-sm mt-2">Net Annual: <span className="font-medium text-gray-600 dark:text-gray-400">{f_simple(netInHandYearly)}</span></p>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Salary Breakdown under {taxRegime === 'old' ? 'Old' : 'New'} Tax Regime</h2>
+
+                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+                    <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                        <div className="text-center">
+                            <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Net Monthly</p>
+                            <h3 className="text-2xl font-bold text-teal-600 dark:text-teal-400">{f_simple(netInHandMonthly)}</h3>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Net Annual</p>
+                            <h3 className="text-2xl font-bold text-teal-600 dark:text-teal-400">{f_simple(netInHandYearly)}</h3>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Total Tax Paid</p>
+                            <h3 className="text-xl font-bold text-red-500 dark:text-red-400">{f_simple(totalTaxPaid)}</h3>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Total Saving</p>
+                            <h3 className="text-xl font-bold text-amber-500 dark:text-amber-400">{f_simple(totalInvestmentValue)}</h3>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="max-h-64 sm:max-h-72 flex justify-center my-4">

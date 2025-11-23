@@ -43,11 +43,13 @@ const Header = ({ activeTab, setActiveTab }) => {
         { id: 'additional', label: 'Additional Calculator' },
     ];
 
+    
+
     return (
         <header
             className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled
-                    ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-lg border-b border-teal-500/10 py-2'
-                    : 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-gray-200/80 dark:border-white/10 lg:rounded-bl-[30px] lg:rounded-br-[30px] py-3'
+                ? 'bg-gradient-to-r from-teal-50/90 to-blue-50/90 dark:from-slate-900/95 dark:to-slate-800/95 backdrop-blur-xl shadow-lg border-b border-teal-500/10 py-2'
+                : 'bg-gradient-to-r from-teal-50/80 to-blue-50/80 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-md border-b border-gray-200/80 dark:border-white/10 lg:rounded-bl-[30px] lg:rounded-br-[30px] py-3'
                 }`}
         >
             <div className={`max-w-5xl mx-auto flex justify-between items-center px-4 sm:px-6 ${isScrolled ? 'max-w-[95%]' : ''}`}>
@@ -65,8 +67,9 @@ const Header = ({ activeTab, setActiveTab }) => {
 
                 <div className="flex items-center space-x-2">
                     <div className="hidden sm:flex items-center space-x-2 text-sm">
-                        <a href="#about-section" className="px-3 py-1 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">About</a>
-                        <a href="#faq-section" className="px-3 py-1 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">FAQs</a>
+                        <a href="#about-section" className="px-3 py-1 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors relative w-fit block after:content-[''] after:absolute after:w-0 after:h-[1.5px] after:bottom-0 after:left-0 after:bg-teal-600 dark:after:bg-teal-400 after:transition-all after:duration-300 hover:after:w-full">About</a>
+                        <a href="#faq-section" className="px-3 py-1 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors relative w-fit block after:content-[''] after:absolute after:w-0 after:h-[1.5px] after:bottom-0 after:left-0 after:bg-teal-600 dark:after:bg-teal-400 after:transition-all after:duration-300 hover:after:w-full">FAQs</a>
+                        <a href="#blog-section" className="px-3 py-1 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors relative w-fit block after:content-[''] after:absolute after:w-0 after:h-[1.5px] after:bottom-0 after:left-0 after:bg-teal-600 dark:after:bg-teal-400 after:transition-all after:duration-300 hover:after:w-full">Blog</a>
                     </div>
 
                     <button
@@ -93,8 +96,8 @@ const Header = ({ activeTab, setActiveTab }) => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg ${activeTab === tab.id
-                                    ? 'text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/30'
-                                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                ? 'text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/30'
+                                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                                 }`}
                         >
                             {tab.label}
@@ -118,8 +121,8 @@ const Header = ({ activeTab, setActiveTab }) => {
                                     setIsMobileMenuOpen(false);
                                 }}
                                 className={`text-left px-4 py-3 rounded-lg font-medium ${activeTab === tab.id
-                                        ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border-l-4 border-teal-500'
-                                        : 'text-gray-600 dark:text-gray-400'
+                                    ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border-l-4 border-teal-500'
+                                    : 'text-gray-600 dark:text-gray-400'
                                     }`}
                             >
                                 {tab.label}

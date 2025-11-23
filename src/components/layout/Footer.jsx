@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = ({ setActiveTab }) => {
     return (
-        <footer className="relative py-16 px-4 sm:px-6 lg:px-8 mt-20 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 border-t border-gray-200 dark:border-gray-800">
+        <footer className="relative py-16 px-4 sm:px-6 lg:px-8 mt-20 bg-gradient-to-br from-teal-50 to-blue-50 dark:from-slate-900 dark:to-slate-950 border-t border-gray-200 dark:border-gray-800">
             <div className="max-w-5xl mx-auto px-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <div className="col-span-2 md:col-span-1">
