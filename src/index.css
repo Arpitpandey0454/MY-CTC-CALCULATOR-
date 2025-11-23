@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-inter;
+    }
+}
+
+/* Background Styles from original HTML */
+.bg-arpit-gradient {
+    background-image:
+        radial-gradient(1200px 300px at 50% 0%, rgba(0, 0, 0, 0.12), transparent 30%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.02) 100%),
+        linear-gradient(90deg, #e8fbf2 0%, #dff4ef 18%, #eaf3ff 55%, #f2f7fb 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.bg-arpit-gradient::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+        radial-gradient(1200px 300px at 50% 0%, rgba(0, 0, 0, 0.12), transparent 30%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.02) 100%),
+        linear-gradient(90deg, #e8fbf2 0%, #dff4ef 18%, #eaf3ff 55%, #f2f7fb 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: saturate(0.98) contrast(0.98);
+    pointer-events: none;
+}
+
+.dark .bg-arpit-gradient {
+    background-image: none;
+    background-color: #030712;
+}
+
+.dark .bg-arpit-gradient::before {
+    background-image: none;
+    background-color: #030712;
+    filter: none;
+}
+
+/* Form Elements */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Custom Scrollbar for Modal (optional) */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+}
