@@ -71,11 +71,11 @@ const CTCInput = ({
 
             <hr className="border-gray-200/80 dark:border-gray-700/80 my-4" />
 
-            <div className="space-y-4 flex items-center">
+            <div className="space-y-4 flex items-left">
                 <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Income Tax Regime  </h3>
                 
                     
-                    <div className="mr-6 flex items-center space-x-3">
+                    <div className="mr-6 flex items-left space-x-3">
                         <label className="inline-flex items-center cursor-pointer">
                             <input type="radio" name="taxRegime" value="new" checked={taxRegime === 'new'} onChange={() => setTaxRegime('new')} className="h-4 w-4 text-teal-600 dark:text-teal-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-teal-500" />
                             <span className="ml-2 text-gray-700 dark:text-gray-300">New</span>
