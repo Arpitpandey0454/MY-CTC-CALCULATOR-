@@ -56,7 +56,7 @@ const Header = ({ activeTab, setActiveTab }) => {
 
                 <div className="flex items-center gap-3">
                     {/* Placeholder for Logo if missing */}
-                    <div className="h-[50px] w-[50px] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <div className="h-[50px] w-[50px] rounded-xl flex items-center justify-center text-white font-bold text-xl ">
                         <img src={logo} alt="Logo" className="h-full w-full object-contain" />
                     </div>
 
