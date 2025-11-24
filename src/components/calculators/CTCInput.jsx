@@ -196,7 +196,7 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Special Allowance (Balancing)</label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400">Special Allowance </label>
                     <Input value={f_simple(results?.components?.special || 0)} readOnly className={inputClass} />
                 </div>
             </div>
