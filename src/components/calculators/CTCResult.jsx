@@ -40,6 +40,7 @@ export const CTCResultSummary = ({ results }) => {
                 ],
                 backgroundColor: ['#0d9488', '#ef4444', '#f59e0b'],
                 borderWidth: 0,
+                hoverOffset: 20,
             },
         ],
     };

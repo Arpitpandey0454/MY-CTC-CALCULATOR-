@@ -157,6 +157,7 @@ const ReverseCTC = () => {
             data: [results.netInHandYearly, results.deductions.employeePF, results.deductions.profTax, results.deductions.totalTax],
             backgroundColor: ['#0d9488', '#f59e0b', '#eab308', '#ef4444'],
             borderWidth: 0,
+            hoverOffset: 20,
         }]
     } : null;
 
