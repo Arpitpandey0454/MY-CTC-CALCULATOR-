@@ -8,7 +8,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         <div className="min-h-screen bg-arpit-gradient text-gray-800 dark:text-gray-200 transition-colors duration-300 flex flex-col">
             <Header activeTab={activeTab} setActiveTab={setActiveTab} />
 
-            <main className="flex-grow container mx-auto px-4 py-8 relative z-10 pt-40 sm:pt-48">
+            <main className="flex-grow container mx-auto px-4 py-8 relative z-10 pt-32 sm:pt-36">
                 {children}
                 <AboutAndFAQ />
             </main>

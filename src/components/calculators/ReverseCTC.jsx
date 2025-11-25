@@ -7,15 +7,33 @@ import { Download } from 'lucide-react';
 import { f_simple, neg_f_simple, numberToWordsIndian, formatIndianCurrency, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
+import ShareModal from '../shared/ShareModal';
+import { Share2 } from 'lucide-react';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ReverseCTC = () => {
-    const [targetInHand, setTargetInHand] = useState(70000);
-    const [taxRegime, setTaxRegime] = useState('new');
-    const [includePF, setIncludePF] = useState(true);
-    const [includeProfTax, setIncludeProfTax] = useState(true);
+    // Initialize state from URL params if available
+    const getInitialState = () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('tab') !== 'inhand-to-ctc') return null;
+
+        return {
+            target: params.get('target'),
+            regime: params.get('regime'),
+            pf: params.get('pf') === 'true',
+            pt: params.get('pt') === 'true'
+        };
+    };
+
+    const urlState = getInitialState();
+
+    const [targetInHand, setTargetInHand] = useState(urlState?.target ? parseFloat(urlState.target) : 70000);
+    const [taxRegime, setTaxRegime] = useState(urlState?.regime || 'new');
+    const [includePF, setIncludePF] = useState(urlState ? urlState.pf : true);
+    const [includeProfTax, setIncludeProfTax] = useState(urlState ? urlState.pt : true);
     const [results, setResults] = useState(null);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     // Tax Slabs (Same as in useSalaryCalculation, could be shared)
     const oldTaxSlabs = [
@@ -114,6 +132,19 @@ const ReverseCTC = () => {
             else maxCTC = trialCTC;
         }
         setResults(finalRes);
+    };
+
+    const generateShareUrl = () => {
+        const params = new URLSearchParams();
+        params.set('tab', 'inhand-to-ctc');
+        params.set('target', targetInHand);
+        params.set('regime', taxRegime);
+        params.set('pf', includePF);
+        params.set('pt', includeProfTax);
+
+        const url = new URL(window.location);
+        url.search = params.toString();
+        return url.toString();
     };
 
     useEffect(() => {
@@ -303,12 +334,15 @@ const ReverseCTC = () => {
                                 <hr className="border-gray-200/80 dark:border-gray-700/80 mt-4" />
                                 <div className="mt-4">
                                     <h5 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">Download Report</h5>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Button onClick={handleDownloadPDF} variant="primary" className="py-3">
+                                    <div className="flex flex-col gap-4">
+                                        <Button onClick={handleDownloadPDF} variant="primary" className="py-3 w-full">
                                             <Download size={18} className="mr-2" /> PDF
                                         </Button>
-                                        <Button onClick={handleDownloadExcel} variant="secondary" className="py-3">
+                                        <Button onClick={handleDownloadExcel} variant="secondary" className="py-3 w-full">
                                             <Download size={18} className="mr-2" /> Excel
+                                        </Button>
+                                        <Button onClick={() => setIsShareModalOpen(true)} variant="outline" className="py-3 w-full border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:border-teal-300 dark:hover:border-teal-700">
+                                            <Share2 size={18} className="mr-2" /> Share Calculation
                                         </Button>
                                     </div>
                                 </div>
@@ -317,6 +351,12 @@ const ReverseCTC = () => {
                     </div>
                 </div>
             </div>
+
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                shareUrl={generateShareUrl()}
+            />
         </div>
     );
 };

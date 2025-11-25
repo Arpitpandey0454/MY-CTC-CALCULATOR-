@@ -1,35 +1,27 @@
 import React, { useState } from 'react';
 import CTCInput from './CTCInput';
-import CTCResult from './CTCResult';
+import { CTCResultSummary, CTCResultDetails } from './CTCResult';
 import { useSalaryCalculation } from '../../hooks/useSalaryCalculation';
 import Modal from '../shared/Modal';
 import { f_simple } from '../../utils/formatters';
+
 
 const CTCCalculator = () => {
     const salaryData = useSalaryCalculation();
     const [isTaxModalOpen, setIsTaxModalOpen] = useState(false);
 
     return (
-        <div className="max-w-5xl mx-auto">
-            <div className="max-w-5xl mx-auto mb-6">
-                <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
-                    <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">CTC To In-hand Calculator</h2>
-                    <p className="text-gray-600 dark:text-gray-400">Enter your CTC and components to see gross, deductions and net in-hand salary.</p>
-                </div>
+        <div className="max-w-3xl mx-auto mb-3">
+            <div className="bg-sky-50 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8 mb-3">
+                <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">CTC To In-hand Calculator</h2>
+                <p className="text-gray-600 dark:text-gray-400">Enter your CTC and components to see gross, deductions and net in-hand salary.</p>
             </div>
 
-            <div className="max-w-5xl mx-auto">
-                {/* The input component now wraps the grid structure or we need to adjust layout. 
-             The original design had a 3-column grid where Input was col-1 and Results were col-2 & col-3.
-             We'll recreate that grid here.
-         */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8 lg:col-span-3">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                            <CTCInput {...salaryData} />
-                            <CTCResult results={salaryData.results} onShowTaxDetails={() => setIsTaxModalOpen(true)} />
-                        </div>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <CTCInput {...salaryData} />
+                <CTCResultSummary results={salaryData.results} />
+                <div className="lg:col-span-2">
+                    <CTCResultDetails results={salaryData.results} onShowTaxDetails={() => setIsTaxModalOpen(true)} generateShareUrl={salaryData.generateShareUrl} />
                 </div>
             </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './components/layout/Layout';
 import CTCCalculator from './components/calculators/CTCCalculator';
 import ReverseCTC from './components/calculators/ReverseCTC';
@@ -8,7 +8,25 @@ import HikeCalculator from './components/calculators/HikeCalculator';
 import AdditionalCalculators from './components/calculators/AdditionalCalculators';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('ctc-to-inhand');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'ctc-to-inhand';
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, []);
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    const url = new URL(window.location);
+    url.searchParams.set('tab', tabId);
+    window.history.pushState({}, '', url);
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -30,7 +48,7 @@ function App() {
   };
 
   return (
-    <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
+    <Layout activeTab={activeTab} setActiveTab={handleTabChange}>
       {renderContent()}
     </Layout>
   );

@@ -1,10 +1,34 @@
 import { useState, useEffect } from 'react';
 
 export const useSalaryCalculation = () => {
-    const [ctc, setCtc] = useState(1000000);
-    const [taxRegime, setTaxRegime] = useState('new');
-    const [inputMode, setInputMode] = useState('percentage'); // 'percentage' | 'amount'
-    const [includeEmployerPF, setIncludeEmployerPF] = useState(true);
+    // Initialize state from URL params if available
+    const getInitialState = () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('tab') !== 'ctc-to-inhand') return null;
+
+        return {
+            ctc: params.get('ctc'),
+            regime: params.get('regime'),
+            mode: params.get('mode'),
+            incPF: params.get('incPF') === 'true',
+            basic: params.get('basic'),
+            hra: params.get('hra'),
+            empPF: params.get('empPF'),
+            emplrPF: params.get('emplrPF'),
+            gratuity: params.get('gratuity'),
+            insurance: params.get('insurance'),
+            other: params.get('other'),
+            nps: params.get('nps'),
+            profTax: params.get('profTax')
+        };
+    };
+
+    const urlState = getInitialState();
+
+    const [ctc, setCtc] = useState(urlState?.ctc || 1000000);
+    const [taxRegime, setTaxRegime] = useState(urlState?.regime || 'new');
+    const [inputMode, setInputMode] = useState(urlState?.mode || 'percentage'); // 'percentage' | 'amount'
+    const [includeEmployerPF, setIncludeEmployerPF] = useState(urlState ? urlState.incPF : true);
 
     // Store current input values. Interpretation depends on inputMode.
     // In 'percentage' mode:
@@ -13,15 +37,15 @@ export const useSalaryCalculation = () => {
     // - insurance, other: % of CTC
     // - profTax: Always Amount (₹)
     const [inputs, setInputs] = useState({
-        basic: 40,
-        hra: 40,
-        empPF: 12,
-        emplrPF: 12,
-        gratuity: 4.81,
-        insurance: 0,
-        other: 0,
-        nps: 0,
-        profTax: 2400 // Default value
+        basic: urlState?.basic || 40,
+        hra: urlState?.hra || 40,
+        empPF: urlState?.empPF || 12,
+        emplrPF: urlState?.emplrPF || 12,
+        gratuity: urlState?.gratuity || 4.81,
+        insurance: urlState?.insurance || 0,
+        other: urlState?.other || 0,
+        nps: urlState?.nps || 0,
+        profTax: urlState?.profTax || 2400 // Default value
     });
 
     const [results, setResults] = useState(null);
@@ -293,13 +317,31 @@ export const useSalaryCalculation = () => {
         calculateSalary();
     }, [ctc, taxRegime, inputMode, inputs, includeEmployerPF]);
 
+    const generateShareUrl = () => {
+        const params = new URLSearchParams();
+        params.set('tab', 'ctc-to-inhand');
+        params.set('ctc', ctc);
+        params.set('regime', taxRegime);
+        params.set('mode', inputMode);
+        params.set('incPF', includeEmployerPF);
+
+        Object.entries(inputs).forEach(([key, value]) => {
+            params.set(key, value);
+        });
+
+        const url = new URL(window.location);
+        url.search = params.toString();
+        return url.toString();
+    };
+
     return {
         ctc, setCtc,
         taxRegime, setTaxRegime,
         inputMode, handleModeChange,
         inputs, updateInput,
         includeEmployerPF, setIncludeEmployerPF,
-        results
+        results,
+        generateShareUrl
     };
 };
 
