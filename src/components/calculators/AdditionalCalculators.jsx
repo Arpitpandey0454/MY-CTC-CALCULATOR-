@@ -38,7 +38,7 @@ const AdditionalCalculators = () => {
     ];
 
     return (
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-3xl mx-auto">
             <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
                 <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">Additional Calculators</h2>
 

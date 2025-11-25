@@ -88,7 +88,7 @@ const TaxCalculator = () => {
     };
 
     return (
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-3xl mx-auto">
             <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl dark:shadow-none border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
                 <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Tax Calculator (Old vs New Regime)</h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-8">Calculate and compare tax under both regimes</p>
