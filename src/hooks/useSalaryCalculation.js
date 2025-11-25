@@ -45,7 +45,11 @@ export const useSalaryCalculation = () => {
         insurance: urlState?.insurance || 0,
         other: urlState?.other || 0,
         nps: urlState?.nps || 0,
-        profTax: urlState?.profTax || 2400 // Default value
+        profTax: urlState?.profTax || (
+            (urlState?.mode || 'percentage') === 'percentage'
+                ? ((2400 / (urlState?.ctc || 1000000)) * 100).toFixed(2)
+                : 2400
+        )
     });
 
     const [results, setResults] = useState(null);
@@ -127,8 +131,8 @@ export const useSalaryCalculation = () => {
             });
 
             // Dependent on CTC (% of CTC -> Amount)
-            // Insurance, Other (ProfTax is EXCLUDED as it is always Amount)
-            ['insurance', 'other'].forEach(key => {
+            // Insurance, Other, ProfTax
+            ['insurance', 'other', 'profTax'].forEach(key => {
                 newInputs[key] = ((parseFloat(inputs[key]) / 100) * ctcVal).toFixed(0);
             });
 
@@ -146,8 +150,7 @@ export const useSalaryCalculation = () => {
             });
 
             // Dependent on CTC (Amount -> % of CTC)
-            // ProfTax is EXCLUDED
-            ['insurance', 'other'].forEach(key => {
+            ['insurance', 'other', 'profTax'].forEach(key => {
                 const val = parseFloat(inputs[key]) || 0;
                 newInputs[key] = ctcVal > 0 ? ((val / ctcVal) * 100).toFixed(2) : 0;
             });
@@ -163,7 +166,7 @@ export const useSalaryCalculation = () => {
         if (isNaN(val) || val < 0) val = 0; // No negatives
 
         // Prof Tax is always Amount, so we don't apply % limits to it
-        if (inputMode === 'percentage' && key !== 'profTax') {
+        if (inputMode === 'percentage') {
             if (val > 100) val = 100; // Max 100%
             if (key === 'gratuity' && val > 4.81) val = 4.81; // Max 4.81% for Gratuity
             if (key === 'nps' && val > 14) val = 14; // Max 14% for NPS
@@ -183,7 +186,8 @@ export const useSalaryCalculation = () => {
         let basic, hra, empPF, emplrPF, gratuity, insurance, other, nps, profTax;
 
         // Prof Tax is always taken directly as amount
-        profTax = parseFloat(inputs.profTax) || 0;
+        // Prof Tax calculation depends on mode now
+        // profTax = parseFloat(inputs.profTax) || 0; // Removed fixed assignment
 
         if (inputMode === 'percentage') {
             basic = (parseFloat(inputs.basic) / 100) * ctcValue;
@@ -202,6 +206,7 @@ export const useSalaryCalculation = () => {
             // Components dependent on CTC
             insurance = (parseFloat(inputs.insurance) / 100) * ctcValue;
             other = (parseFloat(inputs.other) / 100) * ctcValue;
+            profTax = (parseFloat(inputs.profTax) / 100) * ctcValue;
         } else {
             basic = parseFloat(inputs.basic) || 0;
             hra = parseFloat(inputs.hra) || 0;
@@ -210,6 +215,7 @@ export const useSalaryCalculation = () => {
             gratuity = parseFloat(inputs.gratuity) || 0;
             insurance = parseFloat(inputs.insurance) || 0;
             other = parseFloat(inputs.other) || 0;
+            profTax = parseFloat(inputs.profTax) || 0;
 
             let npsRaw = parseFloat(inputs.nps) || 0;
             let npsLimit = basic * 0.14;

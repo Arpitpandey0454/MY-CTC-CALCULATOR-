@@ -19,7 +19,7 @@ const CTCInput = ({
     };
 
     const handleInputChange = (key, value) => {
-        if (inputMode === 'amount' || key === 'profTax') {
+        if (inputMode === 'amount') {
             updateInput(key, parseIndianNumber(value));
         } else {
             updateInput(key, value);
@@ -27,16 +27,15 @@ const CTCInput = ({
     };
 
     const getInputValue = (key) => {
-        if (inputMode === 'amount' || key === 'profTax') {
+        if (inputMode === 'amount') {
             return formatIndianNumber(inputs[key]);
         }
         return inputs[key];
     };
 
     const getLabelSuffix = (key) => {
-        if (key === 'profTax') return '₹';
         if (inputMode === 'amount') return '₹';
-        if (key === 'basic' || key === 'insurance' || key === 'other') return '%';
+        if (key === 'basic' || key === 'insurance' || key === 'other' || key === 'profTax' || key === 'special') return '%';
         return '%';
     };
 
@@ -186,15 +185,21 @@ const CTCInput = ({
 
                     <label className="text-sm text-gray-600 dark:text-gray-400">Professional Tax <span className="text-xs text-gray-500">({getLabelSuffix('profTax')})</span></label>
                     <Input
-                        type="text"
+                        type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('profTax')}
                         onChange={(e) => handleInputChange('profTax', e.target.value)}
                         className={inputClass}
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Special Allowance </label>
-                    <Input value={f_simple(results?.components?.special || 0)} readOnly className={inputClass} />
+                    <label className="text-sm text-gray-600 dark:text-gray-400">Special Allowance <span className="text-xs text-gray-500">({getLabelSuffix('special')})</span></label>
+                    <Input
+                        value={inputMode === 'percentage' && ctc > 0
+                            ? ((results?.components?.special || 0) / ctc * 100).toFixed(2)
+                            : f_simple(results?.components?.special || 0)}
+                        readOnly
+                        className={inputClass}
+                    />
                 </div>
             </div>
         </div>
