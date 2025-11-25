@@ -1,6 +1,8 @@
 import React from 'react';
 import Input from '../shared/Input';
 import { numberToWordsIndian, f_simple, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
+import { HelpCircle } from 'lucide-react';
+import Tooltip from '../shared/Tooltip';
 
 const CTCInput = ({
     ctc, setCtc,
@@ -33,10 +35,8 @@ const CTCInput = ({
         return inputs[key];
     };
 
-    const getLabelSuffix = (key) => {
-        if (inputMode === 'amount') return '₹';
-        if (key === 'basic' || key === 'insurance' || key === 'other' || key === 'profTax' || key === 'special') return '%';
-        return '%';
+    const getTooltipText = (label) => {
+        return `Enter ${inputMode} for ${label}`;
     };
 
     const inputClass = "w-22 text-right";
@@ -102,7 +102,12 @@ const CTCInput = ({
                 </div>
 
                 <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 items-center">
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Basic <span className="text-xs text-gray-500">({getLabelSuffix('basic')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        Basic
+                        <Tooltip content={getTooltipText('Basic Salary')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('basic')}
@@ -111,7 +116,12 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">HRA <span className="text-xs text-gray-500">({getLabelSuffix('hra')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        HRA
+                        <Tooltip content={getTooltipText('HRA')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('hra')}
@@ -120,7 +130,12 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Employee PF <span className="text-xs text-gray-500">({getLabelSuffix('empPF')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        Employee PF
+                        <Tooltip content={getTooltipText('Employee PF')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('empPF')}
@@ -136,7 +151,12 @@ const CTCInput = ({
                             onChange={(e) => setIncludeEmployerPF(e.target.checked)}
                             className="h-4 w-4 text-teal-600 dark:text-teal-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 focus:ring-teal-500 mr-2"
                         />
-                        <label className="text-sm text-gray-600 dark:text-gray-400">Employer PF <span className="text-xs text-gray-500">({getLabelSuffix('emplrPF')})</span></label>
+                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                            Employer PF
+                            <Tooltip content={getTooltipText('Employer PF')}>
+                                <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                            </Tooltip>
+                        </label>
                     </div>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
@@ -147,7 +167,12 @@ const CTCInput = ({
                         readOnly={true}
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Gratuity <span className="text-xs text-gray-500">({getLabelSuffix('gratuity')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        Gratuity
+                        <Tooltip content={getTooltipText('Gratuity')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('gratuity')}
@@ -156,7 +181,12 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Insurance <span className="text-xs text-gray-500">({getLabelSuffix('insurance')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        Insurance
+                        <Tooltip content={getTooltipText('Insurance')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('insurance')}
@@ -165,7 +195,12 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Other Deductions <span className="text-xs text-gray-500">({getLabelSuffix('other')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        Other Deductions
+                        <Tooltip content={getTooltipText('Other Deductions')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('other')}
@@ -174,7 +209,12 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">NPS <span className="text-xs text-gray-500">({getLabelSuffix('nps')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        NPS
+                        <Tooltip content={getTooltipText('NPS')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('nps')}
@@ -183,7 +223,12 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Professional Tax <span className="text-xs text-gray-500">({getLabelSuffix('profTax')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        Professional Tax
+                        <Tooltip content={getTooltipText('Professional Tax')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         type={inputMode === 'amount' ? 'text' : 'number'}
                         value={getInputValue('profTax')}
@@ -192,7 +237,12 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <label className="text-sm text-gray-600 dark:text-gray-400">Special Allowance <span className="text-xs text-gray-500">({getLabelSuffix('special')})</span></label>
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        Special Allowance
+                        <Tooltip content={getTooltipText('Special Allowance')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
                     <Input
                         value={inputMode === 'percentage' && ctc > 0
                             ? ((results?.components?.special || 0) / ctc * 100).toFixed(2)
