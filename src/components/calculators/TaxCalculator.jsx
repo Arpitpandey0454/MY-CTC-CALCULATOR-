@@ -95,7 +95,7 @@ const TaxCalculator = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     {/* Inputs */}
-                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-6 rounded-2xl border border-gray-200 dark:border-gray-600">
+                    <div className="bg-blue-50 from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-6 rounded-2xl border border-gray-200 dark:border-gray-600">
                         <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-4">Annual Income</h3>
                         <div className="space-y-4">
                             <div>

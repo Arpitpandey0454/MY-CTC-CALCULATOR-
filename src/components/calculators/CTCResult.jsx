@@ -214,8 +214,8 @@ export const CTCResultDetails = ({ results, onShowTaxDetails, generateShareUrl }
                     <div>
                         <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Deductions (Annual)</h3>
                         <div className="space-y-2 text-sm">
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee EPF (12% of Basic)</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.employeePF)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee NPS (max 14% of Basic)</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.npsDeduction)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee EPF</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.employeePF)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee NPS</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.npsDeduction)}</span></div>
                             <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Professional Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.profTax)}</span></div>
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600 dark:text-gray-400">Income Tax (TDS)</span>
@@ -225,7 +225,7 @@ export const CTCResultDetails = ({ results, onShowTaxDetails, generateShareUrl }
                                 </div>
                             </div>
                             <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-red-700 dark:text-red-400">
-                                <span>Total Employee Deductions</span> <span>{neg_f_simple(deductions.total)}</span>
+                                <span>Total Employee <br /> Deductions</span> <span>{neg_f_simple(deductions.total)}</span>
                             </div>
                         </div>
                     </div>
@@ -233,11 +233,11 @@ export const CTCResultDetails = ({ results, onShowTaxDetails, generateShareUrl }
                     {/* Column 2: CTC Breakup */}
                     <div className="lg:border-l lg:border-r border-gray-200/80 dark:border-gray-700/80 lg:px-6">
                         <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup (Total CTC)</h3>
-                        <div className="space-y-2 text-sm bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+                        <div className="space-y-2 text-sm ">
                             <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(grossSalary)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employer EPF (12% of Basic)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerPF)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gratuity (4.81% of Basic)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerGratuity)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Insurance (Employer Fixed)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(insuranceEmployer)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employer EPF</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerPF)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gratuity</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerGratuity)}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Insurance </span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(insuranceEmployer)}</span></div>
                             <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">NPS (Employer)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(npsEmployer)}</span></div>
                             <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Other Deductions (Employer Fixed)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(otherEmployer)}</span></div>
                             <div className="flex justify-between font-bold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
