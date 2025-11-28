@@ -94,9 +94,9 @@ const CompareOffers = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
             <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl dark:shadow-none border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
-                <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">Compare CTC Offers</h2>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Compare CTC Offers</h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-8">Compare two salary offers side by side</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
