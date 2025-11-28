@@ -11,17 +11,24 @@ const CTCCalculator = () => {
     const [isTaxModalOpen, setIsTaxModalOpen] = useState(false);
 
     return (
-        <div className="max-w-3xl mx-auto mb-3">
-            <div className="bg-sky-50 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8 mb-3">
-                <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">CTC To In-hand Calculator</h2>
-                <p className="text-gray-600 dark:text-gray-400">Enter your CTC and components to see gross, deductions and net in-hand salary.</p>
-            </div>
+        <div className="max-w-5xl mx-auto mb-3">
+            {/* Main Container Card */}
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <CTCInput {...salaryData} />
-                <CTCResultSummary results={salaryData.results} />
-                <div className="lg:col-span-2">
-                    <CTCResultDetails results={salaryData.results} onShowTaxDetails={() => setIsTaxModalOpen(true)} generateShareUrl={salaryData.generateShareUrl} />
+                {/* Header Section */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">CTC To In-hand Calculator</h1>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
+                        Enter your CTC and components to see gross, deductions and net in-hand salary.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <CTCInput {...salaryData} />
+                    <CTCResultSummary results={salaryData.results} />
+                    <div className="lg:col-span-2">
+                        <CTCResultDetails results={salaryData.results} onShowTaxDetails={() => setIsTaxModalOpen(true)} generateShareUrl={salaryData.generateShareUrl} />
+                    </div>
                 </div>
             </div>
 

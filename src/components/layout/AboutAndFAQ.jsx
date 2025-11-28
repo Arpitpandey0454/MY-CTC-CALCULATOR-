@@ -25,11 +25,11 @@ const AboutAndFAQ = () => {
     return (
         <section id="about-section" className="max-w-5xl mx-auto px-4 py-20">
             <div className="mt-5">
-                <h2 className="text-4xl font-extrabold mb-4 bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 text-center">
+                <h2 className="text-4xl font-extrabold mb-4 bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 ">
                     About the CTC Calculator
                 </h2>
-                <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mt-4">
+                <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl mt-6 p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mt-3">
                         This calculator helps you understand the breakdown of your Cost to Company (CTC) and estimate your in-hand salary. It accounts for common deductions like Employee Provident Fund (EPF), Professional Tax, and Income Tax under both the Old and New Tax Regimes.
                     </p>
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed mt-3">
@@ -39,10 +39,10 @@ const AboutAndFAQ = () => {
             </div>
 
             <div id="faq-section" className="mt-20">
-                <h2 className="text-4xl font-extrabold mb-10 bg-gradient-to-r from-blue-700 via-teal-600 to-teal-700 bg-clip-text text-transparent dark:from-cyan-300 dark:via-teal-200 dark:to-blue-200 text-center">
+                <h2 className="text-4xl font-extrabold mb-4 bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200">
                     Frequently Asked Questions
                 </h2>
-                <div className="space-y-6">
+                <div className="space-y-6 mt-6">
                     {faqs.map((faq, index) => (
                         <div
                             key={index}
