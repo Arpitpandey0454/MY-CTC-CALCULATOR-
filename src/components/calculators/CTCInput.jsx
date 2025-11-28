@@ -21,9 +21,17 @@ const CTCInput = ({
     };
 
     const handleInputChange = (key, value) => {
+        // Insurance and ProfTax are always amounts
+        if (key === 'insurance' || key === 'profTax') {
+            updateInput(key, parseIndianNumber(value));
+            return;
+        }
+
         if (inputMode === 'amount') {
             updateInput(key, parseIndianNumber(value));
         } else {
+            // Block input if greater than 100 in percentage mode
+            if (parseFloat(value) > 100) return;
             updateInput(key, value);
         }
     };
@@ -183,13 +191,13 @@ const CTCInput = ({
 
                     <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                         Insurance
-                        <Tooltip content={getTooltipText('Insurance')}>
+                        <Tooltip content="Enter amount for Insurance">
                             <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
                         </Tooltip>
                     </label>
                     <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
-                        value={getInputValue('insurance')}
+                        type="text"
+                        value={formatIndianNumber(inputs.insurance)}
                         onChange={(e) => handleInputChange('insurance', e.target.value)}
                         className={inputClass}
                         min="0"
@@ -225,13 +233,13 @@ const CTCInput = ({
 
                     <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                         Professional Tax
-                        <Tooltip content={getTooltipText('Professional Tax')}>
+                        <Tooltip content="Enter amount for Professional Tax">
                             <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
                         </Tooltip>
                     </label>
                     <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
-                        value={getInputValue('profTax')}
+                        type="text"
+                        value={formatIndianNumber(inputs.profTax)}
                         onChange={(e) => handleInputChange('profTax', e.target.value)}
                         className={inputClass}
                         min="0"
