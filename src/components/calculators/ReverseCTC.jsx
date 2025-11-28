@@ -218,17 +218,19 @@ const ReverseCTC = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto">
-            <div className="max-w-3xl mx-auto mb-6">
-                <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
-                    <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">In-hand TO CTC Calculator</h2>
-                    <p className="text-gray-600 dark:text-gray-400">Enter desired monthly in-hand to estimate required CTC and breakdown.</p>
-                </div>
-            </div>
+        <div className="max-w-5xl mx-auto">
+            {/* Main Container Card */}
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
 
-            <div className="max-w-5xl mx-auto">
-                {/* Top Row: Input and Summary */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3">
+                {/* Header Section */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">In-hand TO CTC Calculator</h1>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
+                        Enter desired monthly in-hand to estimate required CTC and breakdown.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                     {/* Left: Input Panel */}
                     <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100 h-full">
@@ -307,56 +309,56 @@ const ReverseCTC = () => {
                             </div>
                         </div>
                     )}
-                </div>
 
-                {/* Bottom Row: Details Panel (Full Width) */}
-                {results && (
-                    <div className="mt-4 p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Bottom Row: Details Panel (Full Width) */}
+                    {results && (
+                        <div className="lg:col-span-2 mt-4 p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                            {/* Column 1: Deductions */}
-                            <div>
-                                <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Deductions (Annual)</h5>
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">EPF (Employee)</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.deductions.employeePF)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Professional Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.deductions.profTax)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Income Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.deductions.totalTax)}</span></div>
-                                    <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-red-700 dark:text-red-400">
-                                        <span>Total Deductions</span> <span>{neg_f_simple(results.deductions.total)}</span>
+                                {/* Column 1: Deductions */}
+                                <div>
+                                    <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Deductions (Annual)</h5>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">EPF (Employee)</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.deductions.employeePF)}</span></div>
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Professional Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.deductions.profTax)}</span></div>
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Income Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.deductions.totalTax)}</span></div>
+                                        <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-red-700 dark:text-red-400">
+                                            <span>Total Deductions</span> <span>{neg_f_simple(results.deductions.total)}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Column 2: CTC Breakup */}
-                            <div className="lg:border-l lg:border-r border-gray-200/80 dark:border-gray-700/80 lg:px-6">
-                                <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup</h5>
-                                <div className="space-y-2 text-sm bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.grossSalary)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employer EPF</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.employerPF)}</span></div>
-                                    <div className="flex justify-between font-bold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
-                                        <span>Total CTC</span> <span>{f_simple(results.ctc)}</span>
+                                {/* Column 2: CTC Breakup */}
+                                <div className="lg:border-l lg:border-r border-gray-200/80 dark:border-gray-700/80 lg:px-6">
+                                    <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup</h5>
+                                    <div className="space-y-2 text-sm bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.grossSalary)}</span></div>
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employer EPF</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.employerPF)}</span></div>
+                                        <div className="flex justify-between font-bold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
+                                            <span>Total CTC</span> <span>{f_simple(results.ctc)}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Column 3: Download/Share */}
-                            <div>
-                                <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Download Report</h5>
-                                <div className="flex flex-col gap-4">
-                                    <Button onClick={handleDownloadPDF} variant="primary" className="py-3 w-full">
-                                        <Download size={18} className="mr-2" /> PDF
-                                    </Button>
-                                    <Button onClick={handleDownloadExcel} variant="secondary" className="py-3 w-full">
-                                        <Download size={18} className="mr-2" /> Excel
-                                    </Button>
-                                    <Button onClick={() => setIsShareModalOpen(true)} variant="outline" className="py-3 w-full border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:border-teal-300 dark:hover:border-teal-700">
-                                        <Share2 size={18} className="mr-2" /> Share Calculation
-                                    </Button>
+                                {/* Column 3: Download/Share */}
+                                <div>
+                                    <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Download Report</h5>
+                                    <div className="flex flex-col gap-4">
+                                        <Button onClick={handleDownloadPDF} variant="primary" className="py-3 w-full">
+                                            <Download size={18} className="mr-2" /> PDF
+                                        </Button>
+                                        <Button onClick={handleDownloadExcel} variant="secondary" className="py-3 w-full">
+                                            <Download size={18} className="mr-2" /> Excel
+                                        </Button>
+                                        <Button onClick={() => setIsShareModalOpen(true)} variant="outline" className="py-3 w-full border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:border-teal-300 dark:hover:border-teal-700">
+                                            <Share2 size={18} className="mr-2" /> Share Calculation
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             <ShareModal
