@@ -5,6 +5,7 @@ import { f_simple, neg_f_simple } from '../../utils/formatters';
 import Button from '../shared/Button';
 import { Download, Share2 } from 'lucide-react';
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import * as XLSX from 'xlsx';
 import ShareModal from '../shared/ShareModal';
 
@@ -139,40 +140,45 @@ export const CTCResultDetails = ({ results, onShowTaxDetails, generateShareUrl }
     const totalInvestmentValue = (deductions.npsDeduction || 0) + (npsEmployer || 0) + (deductions.employeePF || 0) + (employerPF || 0) + (employerGratuity || 0);
 
 
-    const handleDownloadPDF = () => {
-        const doc = new jsPDF();
-        doc.setFontSize(18); doc.text('Salary Breakdown (CTC to In-hand)', 105, 20, { align: 'center' });
-        doc.setFontSize(12); doc.text(`Tax Regime: ${taxRegime === 'old' ? 'Old' : 'New'}`, 105, 30, { align: 'center' });
-        let y = 45;
-        doc.setFontSize(14); doc.text('Summary', 20, y); y += 10;
-        doc.setFontSize(12); doc.text(`Total CTC:`, 20, y); doc.text(f_simple(ctc), 180, y, { align: 'right' }); y += 8;
-        doc.text(`Net Annual Salary:`, 20, y); doc.text(f_simple(netInHandYearly), 180, y, { align: 'right' }); y += 8;
-        doc.text(`Net Monthly Salary:`, 20, y); doc.text(f_simple(netInHandMonthly), 180, y, { align: 'right' }); y += 8;
-        doc.text(`Total Tax Paid:`, 20, y); doc.text(f_simple(totalTaxPaid), 180, y, { align: 'right' }); y += 8;
-        doc.text(`Total Investment:`, 20, y); doc.text(f_simple(totalInvestmentValue), 180, y, { align: 'right' }); y += 15;
+    const handleDownloadPDF = async () => {
+        const element = document.getElementById('ctc-calculator-container');
+        if (!element) return;
 
-        doc.setFontSize(14); doc.text('Earnings (Annual)', 20, y); y += 10;
-        doc.setFontSize(12); doc.text('Basic Salary:', 20, y); doc.text(f_simple(components.basic), 180, y, { align: 'right' }); y += 8;
-        doc.text('HRA:', 20, y); doc.text(f_simple(components.hra), 180, y, { align: 'right' }); y += 8;
-        doc.text('Special Allowance:', 20, y); doc.text(f_simple(components.special), 180, y, { align: 'right' }); y += 8;
-        doc.setFont(undefined, 'bold'); doc.text('Gross Salary:', 20, y); doc.text(f_simple(grossSalary), 180, y, { align: 'right' }); y += 15;
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2, // Higher scale for better quality
+                useCORS: true,
+                logging: false,
+                backgroundColor: null // Transparent background if possible, or matches container
+            });
 
-        doc.setFont(undefined, 'normal'); doc.setFontSize(14); doc.text('Employee Deductions (Annual)', 20, y); y += 10;
-        doc.setFontSize(12); doc.text('Employee EPF:', 20, y); doc.text(f_simple(deductions.employeePF), 180, y, { align: 'right' }); y += 8;
-        doc.text('Employee NPS:', 20, y); doc.text(f_simple(deductions.npsDeduction), 180, y, { align: 'right' }); y += 8;
-        doc.text('Professional Tax:', 20, y); doc.text(f_simple(deductions.profTax), 180, y, { align: 'right' }); y += 8;
-        doc.text('Income Tax:', 20, y); doc.text(f_simple(deductions.totalTax), 180, y, { align: 'right' }); y += 8;
-        doc.setFont(undefined, 'bold'); doc.text('Total Employee Deductions:', 20, y); doc.text(f_simple(deductions.total), 180, y, { align: 'right' }); y += 15;
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
 
-        doc.setFont(undefined, 'normal'); doc.setFontSize(14); doc.text('CTC Breakup (Employer Cost)', 20, y); y += 10;
-        doc.setFontSize(12); doc.text('Gross Salary:', 20, y); doc.text(f_simple(grossSalary), 180, y, { align: 'right' }); y += 8;
-        doc.text('Employer EPF:', 20, y); doc.text(f_simple(employerPF), 180, y, { align: 'right' }); y += 8;
-        doc.text('Gratuity (Employer):', 20, y); doc.text(f_simple(employerGratuity), 180, y, { align: 'right' }); y += 8;
-        doc.text('Insurance (Employer):', 20, y); doc.text(f_simple(insuranceEmployer), 180, y, { align: 'right' }); y += 8;
-        doc.text('NPS (Employer):', 20, y); doc.text(f_simple(npsEmployer), 180, y, { align: 'right' }); y += 8;
-        doc.text('Other Deductions (Employer):', 20, y); doc.text(f_simple(otherEmployer), 180, y, { align: 'right' }); y += 8;
-        doc.setFont(undefined, 'bold'); doc.text('Total CTC:', 20, y); doc.text(f_simple(ctc), 180, y, { align: 'right' });
-        doc.save('salary-breakdown-ctc-to-inhand.pdf');
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 297; // A4 height in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('salary-breakdown-ctc-to-inhand.pdf');
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        }
     };
 
     const handleDownloadExcel = () => {

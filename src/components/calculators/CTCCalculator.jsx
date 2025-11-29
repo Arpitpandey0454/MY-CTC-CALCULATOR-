@@ -13,7 +13,7 @@ const CTCCalculator = () => {
     return (
         <div className="max-w-5xl mx-auto mb-3">
             {/* Main Container Card */}
-            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
+            <div id="ctc-calculator-container" className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
 
                 {/* Header Section */}
                 <div className="mb-8">
