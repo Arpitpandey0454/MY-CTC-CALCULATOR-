@@ -82,18 +82,6 @@ export const CTCResultSummary = ({ results }) => {
                 <Pie data={chartData} options={chartOptions} />
             </div>
 
-            <div>
-                <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Earnings Breakdown (Annual)</h3>
-                <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Basic Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.basic)}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">HRA</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.hra)}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Special Allowance</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.special)}</span></div>
-                    <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
-                        <span>Gross Salary (Taxable Income Source)</span> <span>{f_simple(grossSalary)}</span>
-                    </div>
-                </div>
-            </div>
-
             <div className="mt-4">
                 <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Tax Calculation</h3>
                 <div className="space-y-2 text-sm">
@@ -115,6 +103,7 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
 
     const {
         ctc,
+        components,
         grossSalary,
         employerPF,
         employerGratuity,
@@ -126,7 +115,7 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
 
     return (
         <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Column 1: Deductions */}
                 <div>
                     <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Deductions (Annual)</h3>
@@ -148,7 +137,7 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
                 </div>
 
                 {/* Column 2: CTC Breakup */}
-                <div className="lg:border-l border-gray-200/80 dark:border-gray-700/80 lg:px-6">
+                <div className="lg:border-l lg:border-r border-gray-200/80 dark:border-gray-700/80 lg:px-6">
                     <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup (Total CTC)</h3>
                     <div className="space-y-2 text-sm ">
                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(grossSalary)}</span></div>
@@ -159,6 +148,19 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Other Deductions (Employer Fixed)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(otherEmployer)}</span></div>
                         <div className="flex justify-between font-bold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
                             <span>Total CTC</span> <span>{f_simple(ctc)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Column 3: Earnings Breakdown */}
+                <div>
+                    <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Earnings Breakdown (Annual)</h3>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Basic Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.basic)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">HRA</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.hra)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Special Allowance</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.special)}</span></div>
+                        <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
+                            <span>Gross Salary (Taxable Income Source)</span> <span>{f_simple(grossSalary)}</span>
                         </div>
                     </div>
                 </div>
