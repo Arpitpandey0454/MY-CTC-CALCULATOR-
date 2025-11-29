@@ -392,34 +392,34 @@ const TaxCalculator = () => {
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Tax Summary</h3>
 
                                 <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 mb-6 bg-white dark:bg-gray-900">
-                                    <table className="w-full text-sm text-left">
+                                    <table className="w-full text-xs text-left">
                                         <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-semibold">
                                             <tr>
-                                                <th className="p-3">Particulars</th>
-                                                <th className="p-3 text-right">Old Regime</th>
-                                                <th className="p-3 text-right">New Regime</th>
+                                                <th className="p-2">Particulars</th>
+                                                <th className="p-2 text-right">Old Regime</th>
+                                                <th className="p-2 text-right">New Regime</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                             <tr>
-                                                <td className="p-3 text-gray-700 dark:text-gray-300">Taxable Income</td>
-                                                <td className="p-3 text-right font-medium">{f_simple(results.old.taxable)}</td>
-                                                <td className="p-3 text-right font-medium">{f_simple(results.new.taxable)}</td>
+                                                <td className="p-2 text-gray-700 dark:text-gray-300">Taxable Income</td>
+                                                <td className="p-2 text-right font-medium">{f_simple(results.old.taxable)}</td>
+                                                <td className="p-2 text-right font-medium">{f_simple(results.new.taxable)}</td>
                                             </tr>
                                             <tr>
-                                                <td className="p-3 text-gray-700 dark:text-gray-300">Income Tax</td>
-                                                <td className="p-3 text-right text-gray-600 dark:text-gray-400">{f_simple(results.old.tax)}</td>
-                                                <td className="p-3 text-right text-gray-600 dark:text-gray-400">{f_simple(results.new.tax)}</td>
+                                                <td className="p-2 text-gray-700 dark:text-gray-300">Income Tax</td>
+                                                <td className="p-2 text-right text-gray-600 dark:text-gray-400">{f_simple(results.old.tax)}</td>
+                                                <td className="p-2 text-right text-gray-600 dark:text-gray-400">{f_simple(results.new.tax)}</td>
                                             </tr>
                                             <tr>
-                                                <td className="p-3 text-gray-700 dark:text-gray-300">Cess (4%)</td>
-                                                <td className="p-3 text-right text-gray-600 dark:text-gray-400">{f_simple(results.old.cess)}</td>
-                                                <td className="p-3 text-right text-gray-600 dark:text-gray-400">{f_simple(results.new.cess)}</td>
+                                                <td className="p-2 text-gray-700 dark:text-gray-300">Cess (4%)</td>
+                                                <td className="p-2 text-right text-gray-600 dark:text-gray-400">{f_simple(results.old.cess)}</td>
+                                                <td className="p-2 text-right text-gray-600 dark:text-gray-400">{f_simple(results.new.cess)}</td>
                                             </tr>
                                             <tr className="bg-blue-50/50 dark:bg-blue-900/20 font-bold">
-                                                <td className="p-3 text-blue-900 dark:text-blue-100">Net Tax</td>
-                                                <td className="p-3 text-right text-blue-700 dark:text-blue-300">{f_simple(results.old.final)}</td>
-                                                <td className="p-3 text-right text-blue-700 dark:text-blue-300">{f_simple(results.new.final)}</td>
+                                                <td className="p-2 text-blue-900 dark:text-blue-100">Net Tax</td>
+                                                <td className="p-2 text-right text-blue-700 dark:text-blue-300">{f_simple(results.old.final)}</td>
+                                                <td className="p-2 text-right text-blue-700 dark:text-blue-300">{f_simple(results.new.final)}</td>
                                             </tr>
                                         </tbody>
                                     </table>
