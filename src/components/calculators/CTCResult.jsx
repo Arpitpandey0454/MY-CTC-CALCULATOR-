@@ -82,18 +82,19 @@ export const CTCResultSummary = ({ results }) => {
                 <Pie data={chartData} options={chartOptions} />
             </div>
 
-            <div className="mt-4">
-                <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Tax Calculation</h3>
+            <div className="mt-6 text-left">
+                <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Earnings Breakdown (Annual)</h3>
                 <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(grossSalary)}</span></div>
-                    <div className="flex justify-between text-red-600 dark:text-red-400">
-                        <span>Standard Deduction</span> <span>{neg_f_simple(taxCalc.standardDeduction)}</span>
-                    </div>
+                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Basic Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.basic)}</span></div>
+                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">HRA</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.hra)}</span></div>
+                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Special Allowance</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.special)}</span></div>
                     <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
-                        <span>Taxable Income (before other ded.)</span> <span>{f_simple(taxCalc.taxableIncome)}</span>
+                        <span>Gross Salary (Taxable Income Source)</span> <span>{f_simple(grossSalary)}</span>
                     </div>
                 </div>
             </div>
+
+
         </div>
     );
 };
@@ -152,15 +153,20 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
                     </div>
                 </div>
 
-                {/* Column 3: Earnings Breakdown */}
+                {/* Column 3: Earnings Breakdown & Tax Calculation */}
                 <div>
-                    <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Earnings Breakdown (Annual)</h3>
-                    <div className="space-y-2 text-sm">
-                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Basic Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.basic)}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">HRA</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.hra)}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Special Allowance</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(components.special)}</span></div>
-                        <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
-                            <span>Gross Salary (Taxable Income Source)</span> <span>{f_simple(grossSalary)}</span>
+
+
+                    <div>
+                        <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Tax Calculation</h3>
+                        <div className="space-y-2 text-sm">
+                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(grossSalary)}</span></div>
+                            <div className="flex justify-between text-red-600 dark:text-red-400">
+                                <span>Standard Deduction</span> <span>{neg_f_simple(results.taxCalc.standardDeduction)}</span>
+                            </div>
+                            <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
+                                <span>Taxable Income (before other ded.)</span> <span>{f_simple(results.taxCalc.taxableIncome)}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
