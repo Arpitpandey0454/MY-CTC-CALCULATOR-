@@ -2,12 +2,6 @@ import React, { useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { f_simple, neg_f_simple } from '../../utils/formatters';
-import Button from '../shared/Button';
-import { Download, Share2 } from 'lucide-react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import * as XLSX from 'xlsx';
-import ShareModal from '../shared/ShareModal';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -116,15 +110,11 @@ export const CTCResultSummary = ({ results }) => {
     );
 };
 
-export const CTCResultDetails = ({ results, onShowTaxDetails, generateShareUrl }) => {
-    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-
+export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
     if (!results) return null;
 
     const {
         ctc,
-        taxRegime,
-        components,
         grossSalary,
         employerPF,
         employerGratuity,
@@ -132,155 +122,51 @@ export const CTCResultDetails = ({ results, onShowTaxDetails, generateShareUrl }
         otherEmployer,
         npsEmployer,
         deductions,
-        netInHandYearly,
-        netInHandMonthly
     } = results;
 
-    const totalTaxPaid = deductions.profTax + deductions.totalTax;
-    const totalInvestmentValue = (deductions.npsDeduction || 0) + (npsEmployer || 0) + (deductions.employeePF || 0) + (employerPF || 0) + (employerGratuity || 0);
-
-
-    const handleDownloadPDF = async () => {
-        const element = document.getElementById('ctc-calculator-container');
-        if (!element) return;
-
-        try {
-            const canvas = await html2canvas(element, {
-                scale: 2, // Higher scale for better quality
-                useCORS: true,
-                logging: false,
-                backgroundColor: null // Transparent background if possible, or matches container
-            });
-
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            const imgWidth = 210; // A4 width in mm
-            const pageHeight = 297; // A4 height in mm
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let heightLeft = imgHeight;
-            let position = 0;
-
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-
-            while (heightLeft >= 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-            }
-
-            pdf.save('salary-breakdown-ctc-to-inhand.pdf');
-        } catch (error) {
-            console.error("Error generating PDF:", error);
-        }
-    };
-
-    const handleDownloadExcel = () => {
-        const wb = XLSX.utils.book_new();
-        const wsData = [
-            ['Salary Breakdown (CTC to In-hand)'], ['Tax Regime', taxRegime],
-            [], ['Summary', 'Amount'],
-            ['Total CTC', ctc], ['Net Annual Salary', netInHandYearly], ['Net Monthly Salary', netInHandMonthly],
-            ['Total Tax Paid', totalTaxPaid], ['Total Investment', totalInvestmentValue],
-            [], ['Earnings (Annual)', 'Amount'],
-            ['Basic Salary', components.basic],
-            ['HRA', components.hra],
-            ['Special Allowance', components.special],
-            ['Gross Salary', grossSalary],
-            [], ['Employee Deductions (Annual)', 'Amount'],
-            ['Employee EPF', deductions.employeePF],
-            ['Employee NPS', deductions.npsDeduction],
-            ['Professional Tax', deductions.profTax],
-            ['Income Tax', deductions.totalTax],
-            ['Total Employee Deductions', deductions.total],
-            [], ['CTC Breakup (Employer Cost)', 'Amount'],
-            ['Gross Salary', grossSalary],
-            ['Employer EPF', employerPF],
-            ['Gratuity (Employer)', employerGratuity],
-            ['Insurance (Employer)', insuranceEmployer],
-            ['NPS (Employer)', npsEmployer],
-            ['Other Deductions (Employer)', otherEmployer],
-            ['Total CTC', ctc]
-        ];
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, 'Salary Breakdown');
-        XLSX.writeFile(wb, 'salary-breakdown-ctc-to-inhand.xlsx');
-    };
-
     return (
-        <>
-            <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Column 1: Deductions */}
-                    <div>
-                        <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Deductions (Annual)</h3>
-                        <div className="space-y-2 text-sm">
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee EPF</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.employeePF)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee NPS</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.npsDeduction)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Professional Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.profTax)}</span></div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-gray-600 dark:text-gray-400">Income Tax (TDS)</span>
-                                <div className="flex items-center">
-                                    <span className="text-red-600 dark:text-red-400 font-medium mr-2">{neg_f_simple(deductions.totalTax)}</span>
-                                    <button onClick={onShowTaxDetails} className="text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-medium">(Details)</button>
-                                </div>
-                            </div>
-                            <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-red-700 dark:text-red-400">
-                                <span>Total Employee <br /> Deductions</span> <span>{neg_f_simple(deductions.total)}</span>
+        <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Column 1: Deductions */}
+                <div>
+                    <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Deductions (Annual)</h3>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee EPF</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.employeePF)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employee NPS</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.npsDeduction)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Professional Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.profTax)}</span></div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-600 dark:text-gray-400">Income Tax (TDS)</span>
+                            <div className="flex items-center">
+                                <span className="text-red-600 dark:text-red-400 font-medium mr-2">{neg_f_simple(deductions.totalTax)}</span>
+                                <button onClick={onShowTaxDetails} className="text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-medium">(Details)</button>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Column 2: CTC Breakup */}
-                    <div className="lg:border-l lg:border-r border-gray-200/80 dark:border-gray-700/80 lg:px-6">
-                        <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup (Total CTC)</h3>
-                        <div className="space-y-2 text-sm ">
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(grossSalary)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employer EPF</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerPF)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gratuity</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerGratuity)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Insurance </span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(insuranceEmployer)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">NPS (Employer)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(npsEmployer)}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Other Deductions (Employer Fixed)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(otherEmployer)}</span></div>
-                            <div className="flex justify-between font-bold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
-                                <span>Total CTC</span> <span>{f_simple(ctc)}</span>
-                            </div>
+                        <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-red-700 dark:text-red-400">
+                            <span>Total Employee <br /> Deductions</span> <span>{neg_f_simple(deductions.total)}</span>
                         </div>
                     </div>
+                </div>
 
-                    {/* Column 3: Download */}
-                    <div>
-                        <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Download Report</h3>
-                        <div className="flex flex-col gap-4">
-                            <Button onClick={handleDownloadPDF} variant="primary" className="py-3 w-full">
-                                <Download size={18} className="mr-2" /> PDF
-                            </Button>
-                            <Button onClick={handleDownloadExcel} variant="secondary" className="py-3 w-full">
-                                <Download size={18} className="mr-2" /> Excel
-                            </Button>
-                            <Button onClick={() => setIsShareModalOpen(true)} variant="outline" className="py-3 w-full border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/30 hover:border-teal-300 dark:hover:border-teal-700">
-                                <Share2 size={18} className="mr-2" /> Share Calculation
-                            </Button>
+                {/* Column 2: CTC Breakup */}
+                <div className="lg:border-l border-gray-200/80 dark:border-gray-700/80 lg:px-6">
+                    <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup (Total CTC)</h3>
+                    <div className="space-y-2 text-sm ">
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(grossSalary)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employer EPF</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerPF)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gratuity</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(employerGratuity)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Insurance </span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(insuranceEmployer)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">NPS (Employer)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(npsEmployer)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Other Deductions (Employer Fixed)</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(otherEmployer)}</span></div>
+                        <div className="flex justify-between font-bold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
+                            <span>Total CTC</span> <span>{f_simple(ctc)}</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <ShareModal
-                isOpen={isShareModalOpen}
-                onClose={() => setIsShareModalOpen(false)}
-                shareUrl={generateShareUrl ? generateShareUrl() : window.location.href}
-            />
-        </>
+        </div>
     );
 };
 
-// Keep default export for backward compatibility if needed, but we will switch to named exports
 const CTCResult = ({ results, onShowTaxDetails }) => {
     return (
         <div className="grid grid-cols-1 gap-4">

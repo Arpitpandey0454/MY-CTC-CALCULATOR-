@@ -4,11 +4,96 @@ import { CTCResultSummary, CTCResultDetails } from './CTCResult';
 import { useSalaryCalculation } from '../../hooks/useSalaryCalculation';
 import Modal from '../shared/Modal';
 import { f_simple } from '../../utils/formatters';
+import { Download, Share2, FileSpreadsheet, FileText } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
+import ShareModal from '../shared/ShareModal';
 
 
 const CTCCalculator = () => {
     const salaryData = useSalaryCalculation();
     const [isTaxModalOpen, setIsTaxModalOpen] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+    const handleDownloadPDF = async () => {
+        const element = document.getElementById('ctc-calculator-container');
+        if (!element) return;
+
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: null
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('salary-breakdown-ctc-to-inhand.pdf');
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        }
+    };
+
+    const handleDownloadExcel = () => {
+        if (!salaryData.results) return;
+        const { ctc, taxRegime, components, grossSalary, employerPF, employerGratuity, insuranceEmployer, npsEmployer, otherEmployer, deductions, netInHandYearly, netInHandMonthly } = salaryData.results;
+
+        const totalTaxPaid = deductions.profTax + deductions.totalTax;
+        const totalInvestmentValue = (deductions.npsDeduction || 0) + (npsEmployer || 0) + (deductions.employeePF || 0) + (employerPF || 0) + (employerGratuity || 0);
+
+        const wb = XLSX.utils.book_new();
+        const wsData = [
+            ['Salary Breakdown (CTC to In-hand)'], ['Tax Regime', taxRegime],
+            [], ['Summary', 'Amount'],
+            ['Total CTC', ctc], ['Net Annual Salary', netInHandYearly], ['Net Monthly Salary', netInHandMonthly],
+            ['Total Tax Paid', totalTaxPaid], ['Total Investment', totalInvestmentValue],
+            [], ['Earnings (Annual)', 'Amount'],
+            ['Basic Salary', components.basic],
+            ['HRA', components.hra],
+            ['Special Allowance', components.special],
+            ['Gross Salary', grossSalary],
+            [], ['Employee Deductions (Annual)', 'Amount'],
+            ['Employee EPF', deductions.employeePF],
+            ['Employee NPS', deductions.npsDeduction],
+            ['Professional Tax', deductions.profTax],
+            ['Income Tax', deductions.totalTax],
+            ['Total Employee Deductions', deductions.total],
+            [], ['CTC Breakup (Employer Cost)', 'Amount'],
+            ['Gross Salary', grossSalary],
+            ['Employer EPF', employerPF],
+            ['Gratuity (Employer)', employerGratuity],
+            ['Insurance (Employer)', insuranceEmployer],
+            ['NPS (Employer)', npsEmployer],
+            ['Other Deductions (Employer)', otherEmployer],
+            ['Total CTC', ctc]
+        ];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Salary Breakdown');
+        XLSX.writeFile(wb, 'salary-breakdown-ctc-to-inhand.xlsx');
+    };
 
     return (
         <div className="max-w-5xl mx-auto mb-3">
@@ -16,11 +101,26 @@ const CTCCalculator = () => {
             <div id="ctc-calculator-container" className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
 
                 {/* Header Section */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">CTC To In-hand Calculator</h1>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
-                        Enter your CTC and components to see gross, deductions and net in-hand salary.
-                    </p>
+                <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">CTC To In-hand Calculator</h1>
+                        <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
+                            Enter your CTC and components to see gross, deductions and net in-hand salary.
+                        </p>
+                    </div>
+                    {salaryData.results && (
+                        <div className="flex gap-2">
+                            <button onClick={handleDownloadPDF} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors" title="Download PDF">
+                                <FileText size={20} />
+                            </button>
+                            <button onClick={handleDownloadExcel} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors" title="Download Excel">
+                                <FileSpreadsheet size={20} />
+                            </button>
+                            <button onClick={() => setIsShareModalOpen(true)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors" title="Share">
+                                <Share2 size={20} />
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -64,6 +164,12 @@ const CTCCalculator = () => {
                     </div>
                 )}
             </Modal>
+
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                shareUrl={salaryData.generateShareUrl ? salaryData.generateShareUrl() : window.location.href}
+            />
         </div>
     );
 };
