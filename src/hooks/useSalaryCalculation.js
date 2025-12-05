@@ -159,6 +159,15 @@ export const useSalaryCalculation = () => {
 
     const updateInput = (key, value) => {
         // Validation and Constraints
+        // Handle empty input by setting it to "0"
+        if (value === '') {
+            setInputs(prev => ({ ...prev, [key]: "0" }));
+            if (key === 'empPF') {
+                setInputs(prev => ({ ...prev, [key]: "0", emplrPF: "0" }));
+            }
+            return;
+        }
+
         let val = parseFloat(value);
         if (isNaN(val) || val < 0) val = 0; // No negatives
 
@@ -189,22 +198,22 @@ export const useSalaryCalculation = () => {
         insurance = parseFloat(inputs.insurance) || 0;
 
         if (inputMode === 'percentage') {
-            basic = (parseFloat(inputs.basic) / 100) * ctcValue;
+            basic = (parseFloat(inputs.basic) || 0) / 100 * ctcValue;
 
             // Components dependent on Basic
-            hra = (parseFloat(inputs.hra) / 100) * basic;
-            empPF = (parseFloat(inputs.empPF) / 100) * basic;
-            emplrPF = includeEmployerPF ? (parseFloat(inputs.emplrPF) / 100) * basic : 0;
-            gratuity = (parseFloat(inputs.gratuity) / 100) * basic;
+            hra = (parseFloat(inputs.hra) || 0) / 100 * basic;
+            empPF = (parseFloat(inputs.empPF) || 0) / 100 * basic;
+            emplrPF = includeEmployerPF ? ((parseFloat(inputs.emplrPF) || 0) / 100 * basic) : 0;
+            gratuity = (parseFloat(inputs.gratuity) || 0) / 100 * basic;
 
             // NPS Limit Check (Max 14% of Basic)
-            let npsRaw = (parseFloat(inputs.nps) / 100) * basic;
+            let npsRaw = (parseFloat(inputs.nps) || 0) / 100 * basic;
             let npsLimit = basic * 0.14;
             nps = Math.min(npsRaw, npsLimit);
 
             // Components dependent on CTC
             // Insurance and ProfTax are handled as Amount above
-            other = (parseFloat(inputs.other) / 100) * ctcValue;
+            other = (parseFloat(inputs.other) || 0) / 100 * ctcValue;
         } else {
             basic = parseFloat(inputs.basic) || 0;
             hra = parseFloat(inputs.hra) || 0;
