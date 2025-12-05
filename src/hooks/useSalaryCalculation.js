@@ -188,8 +188,30 @@ export const useSalaryCalculation = () => {
         }
     };
 
+    const [percentageError, setPercentageError] = useState(null);
+
     const calculateSalary = () => {
         const ctcValue = parseFloat(ctc) || 0;
+
+        // Percentage Validation
+        if (inputMode === 'percentage') {
+            const basicP = parseFloat(inputs.basic) || 0;
+            const hraP = parseFloat(inputs.hra) || 0;
+            const empPFP = parseFloat(inputs.empPF) || 0;
+            const gratuityP = parseFloat(inputs.gratuity) || 0;
+
+            const totalPercentage = basicP + hraP + empPFP + gratuityP;
+
+            if (totalPercentage > 100) {
+                setPercentageError(totalPercentage.toFixed(2));
+                setResults(null); // Clear results or keep previous valid ones? User said "calculation should not be performed"
+                return;
+            } else {
+                setPercentageError(null);
+            }
+        } else {
+            setPercentageError(null);
+        }
 
         let basic, hra, empPF, emplrPF, gratuity, insurance, other, nps, profTax;
 
@@ -312,6 +334,7 @@ export const useSalaryCalculation = () => {
         inputs, updateInput,
         includeEmployerPF, setIncludeEmployerPF,
         results,
-        generateShareUrl
+        generateShareUrl,
+        percentageError
     };
 };

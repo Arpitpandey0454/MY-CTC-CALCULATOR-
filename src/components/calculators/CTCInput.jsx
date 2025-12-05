@@ -10,7 +10,8 @@ const CTCInput = ({
     inputMode, handleModeChange,
     inputs, updateInput,
     includeEmployerPF, setIncludeEmployerPF,
-    results
+    results,
+    percentageError
 }) => {
 
     const handleCtcChange = (e) => {
@@ -71,6 +72,11 @@ const CTCInput = ({
                     {parseFloat(ctc) <= 0 && (
                         <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-semibold">
                             Invalid input, provide number more than zero.
+                        </div>
+                    )}
+                    {percentageError && (
+                        <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-semibold">
+                            Total percentage should be 100%. Current total: {percentageError}%.
                         </div>
                     )}
                 </div>
