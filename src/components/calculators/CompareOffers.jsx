@@ -1,14 +1,37 @@
 import React, { useState } from 'react';
 import Input from '../shared/Input';
 import Button from '../shared/Button';
+import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
 import { f_simple, numberToWordsIndian, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
+import Tooltip from '../shared/Tooltip';
 
 const CompareOffers = () => {
-    const [offer1, setOffer1] = useState({ ctc: '', regime: 'new' });
-    const [offer2, setOffer2] = useState({ ctc: '', regime: 'new' });
+    const defaultInputs = {
+        basic: 40,
+        hra: 40,
+        da: 10,
+        empPF: 12,
+        emplrPF: 12,
+        gratuity: 4.81,
+        insurance: 0,
+        other: 0,
+        nps: 0,
+        profTax: 2400
+    };
+
+    const createInitialState = (initialCTC = '') => ({
+        ctc: initialCTC,
+        regime: 'new',
+        mode: 'percentage',
+        inputs: { ...defaultInputs },
+        showAdvanced: false
+    });
+
+    const [offer1, setOffer1] = useState(createInitialState());
+    const [offer2, setOffer2] = useState(createInitialState());
     const [results, setResults] = useState(null);
 
-    // Tax Slabs (Duplicated for now, should be in a shared utility/hook)
+    // Rate limits
     const oldTaxSlabs = [
         { limit: 250000, rate: 0 }, { limit: 500000, rate: 0.05 },
         { limit: 1000000, rate: 0.20 }, { limit: Infinity, rate: 0.30 }
@@ -42,32 +65,119 @@ const CompareOffers = () => {
         return tax + cess;
     };
 
-    const calculateOfferBreakdown = (ctc, regime) => {
-        const basic = ctc * 0.40;
-        const hra = basic * 0.40;
-        const employerPF = basic * 0.12;
-        const gratuity = basic * 0.0481;
-        const special = Math.max(0, ctc - (basic + hra + employerPF + gratuity));
+    // Generalized logic to update inputs based on mode
+    const handleInputChange = (setter, currentState, key, value) => {
+        const val = parseFloat(value);
+        let newInputs = { ...currentState.inputs, [key]: value };
 
-        const grossSalary = basic + hra + special;
-        const employeePF = basic * 0.12;
-        const profTax = 2500;
+        // Constraints and interactions
+        if (currentState.mode === 'percentage') {
+            if (key !== 'profTax' && key !== 'insurance' && val > 100) newInputs[key] = 100;
+            if (key === 'gratuity' && val > 4.81) newInputs[key] = 4.81;
+            if (key === 'nps' && val > 14) newInputs[key] = 14;
+        }
+
+        if (key === 'empPF') {
+            newInputs.emplrPF = value;
+        }
+
+        setter({ ...currentState, inputs: newInputs });
+    };
+
+    const handleModeToggle = (setter, currentState, newMode) => {
+        if (newMode === currentState.mode) return;
+        const ctcVal = parseFloat(currentState.ctc) || 0;
+        const inputs = currentState.inputs;
+        let newInputs = { ...inputs };
+
+        if (newMode === 'amount') {
+            // % -> Amount
+            const basicAmt = (parseFloat(inputs.basic) / 100) * ctcVal;
+            newInputs.basic = basicAmt.toFixed(0);
+            ['hra', 'empPF', 'emplrPF', 'gratuity', 'nps'].forEach(k => {
+                newInputs[k] = ((parseFloat(inputs[k]) / 100) * basicAmt).toFixed(0);
+            });
+            ['other', 'da'].forEach(k => {
+                newInputs[k] = ((parseFloat(inputs[k]) / 100) * ctcVal).toFixed(0);
+            });
+        } else {
+            // Amount -> %
+            const basicAmt = parseFloat(inputs.basic) || 0;
+            newInputs.basic = ctcVal > 0 ? ((basicAmt / ctcVal) * 100).toFixed(2) : 0;
+            ['hra', 'empPF', 'emplrPF', 'gratuity', 'nps'].forEach(k => {
+                const val = parseFloat(inputs[k]) || 0;
+                newInputs[k] = basicAmt > 0 ? ((val / basicAmt) * 100).toFixed(2) : 0;
+            });
+            ['other', 'da'].forEach(k => {
+                const val = parseFloat(inputs[k]) || 0;
+                newInputs[k] = ctcVal > 0 ? ((val / ctcVal) * 100).toFixed(2) : 0;
+            });
+        }
+        setter({ ...currentState, mode: newMode, inputs: newInputs });
+    };
+
+
+    const calculateOfferBreakdown = (offerState) => {
+        const ctc = parseFloat(offerState.ctc) || 0;
+        const { inputs, mode, regime } = offerState;
+
+        let basic, hra, empPF, emplrPF, gratuity, insurance, other, nps, profTax, da;
+
+        profTax = parseFloat(inputs.profTax) || 0;
+        insurance = parseFloat(inputs.insurance) || 0;
+
+        if (mode === 'percentage') {
+            basic = (parseFloat(inputs.basic) || 0) / 100 * ctc;
+            hra = (parseFloat(inputs.hra) || 0) / 100 * basic;
+            empPF = (parseFloat(inputs.empPF) || 0) / 100 * basic;
+            emplrPF = (parseFloat(inputs.emplrPF) || 0) / 100 * basic;
+            gratuity = (parseFloat(inputs.gratuity) || 0) / 100 * basic;
+
+            let npsRaw = (parseFloat(inputs.nps) || 0) / 100 * basic;
+            nps = Math.min(npsRaw, basic * 0.14);
+
+            other = (parseFloat(inputs.other) || 0) / 100 * ctc;
+            da = (parseFloat(inputs.da) || 0) / 100 * ctc;
+        } else {
+            basic = parseFloat(inputs.basic) || 0;
+            hra = parseFloat(inputs.hra) || 0;
+            empPF = parseFloat(inputs.empPF) || 0;
+            emplrPF = parseFloat(inputs.emplrPF) || 0;
+            gratuity = parseFloat(inputs.gratuity) || 0;
+            other = parseFloat(inputs.other) || 0;
+            da = parseFloat(inputs.da) || 0;
+            let npsRaw = parseFloat(inputs.nps) || 0;
+            nps = Math.min(npsRaw, basic * 0.14);
+        }
+
+        const employerComponents = basic + hra + emplrPF + gratuity + insurance + nps + other + da;
+        const special = Math.max(0, ctc - employerComponents);
+        const grossSalary = basic + hra + da + special;
 
         const standardDeduction = 50000;
-        let taxableIncome = grossSalary - standardDeduction;
+        let taxableIncome = grossSalary;
         let finalTax = 0;
 
         if (regime === 'old') {
-            const hraExemption = Math.min(hra, basic * 0.50, grossSalary - basic - hra);
-            taxableIncome -= hraExemption;
-            finalTax = calculateTax(Math.max(0, taxableIncome), oldTaxSlabs);
+            const hraExemption = Math.min(hra, basic * 0.50, grossSalary - (basic + hra));
+            const section80C = Math.min(empPF, 150000);
+            const nps80CCD1B = Math.min(nps, 50000); // Assuming user puts logic
+
+            // Simple assumption for comparison: Standard Ded + HRA Exemption + 80C (EPF) + Prof Tax
+            // Note: Compare tool might need simpler assumptions or full inputs. 
+            // Keeping it consistent with main calculator:
+            taxableIncome -= (standardDeduction + hraExemption + section80C + Math.min(nps, 50000) + profTax);
+            const taxDetails = calculateTax(Math.max(0, taxableIncome), oldTaxSlabs);
+            finalTax = taxDetails;
             if (taxableIncome <= 500000) finalTax = Math.max(0, finalTax - 12500);
         } else {
-            finalTax = calculateTax(Math.max(0, taxableIncome), newTaxSlabs);
+            taxableIncome -= standardDeduction;
+            const taxDetails = calculateTax(Math.max(0, taxableIncome), newTaxSlabs);
+            finalTax = taxDetails;
             if (taxableIncome <= 700000) finalTax = 0;
         }
 
-        const totalDeductions = employeePF + profTax + finalTax;
+        const totalDeductions = empPF + nps + profTax + finalTax;
         const netInHandYearly = grossSalary - totalDeductions;
         const netInHandMonthly = netInHandYearly / 12;
 
@@ -75,29 +185,79 @@ const CompareOffers = () => {
     };
 
     const handleCompare = () => {
-        const ctc1 = parseFloat(offer1.ctc) || 0;
-        const ctc2 = parseFloat(offer2.ctc) || 0;
-        if (!ctc1 || !ctc2) return;
-
-        const res1 = calculateOfferBreakdown(ctc1, offer1.regime);
-        const res2 = calculateOfferBreakdown(ctc2, offer2.regime);
+        const res1 = calculateOfferBreakdown(offer1);
+        const res2 = calculateOfferBreakdown(offer2);
 
         setResults({
             offer1: res1,
             offer2: res2,
             diff: {
-                ctc: ctc2 - ctc1,
+                ctc: (parseFloat(offer2.ctc) || 0) - (parseFloat(offer1.ctc) || 0),
                 inHand: res2.netInHandYearly - res1.netInHandYearly,
                 monthly: res2.netInHandMonthly - res1.netInHandMonthly
             }
         });
     };
 
+    const renderAdvancedOptions = (offer, setOffer, label) => (
+        <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+            <button
+                onClick={() => setOffer({ ...offer, showAdvanced: !offer.showAdvanced })}
+                className="flex items-center text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 mb-3"
+            >
+                {offer.showAdvanced ? <ChevronUp size={16} className="mr-1" /> : <ChevronDown size={16} className="mr-1" />}
+                Advanced Options (Salary Components)
+            </button>
+
+            {offer.showAdvanced && (
+                <div className="space-y-3 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
+                    <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1 mb-3">
+                        <button
+                            onClick={() => handleModeToggle(setOffer, offer, 'percentage')}
+                            className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${offer.mode === 'percentage' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
+                        >
+                            Percentage
+                        </button>
+                        <button
+                            onClick={() => handleModeToggle(setOffer, offer, 'amount')}
+                            className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${offer.mode === 'amount' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
+                        >
+                            Amount
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        {['basic', 'hra', 'da', 'empPF', 'emplrPF'].map(field => (
+                            <div key={field}>
+                                <label className="block text-xs text-gray-500 mb-1 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+                                <Input
+                                    value={offer.inputs[field]}
+                                    onChange={(e) => handleInputChange(setOffer, offer, field, e.target.value)}
+                                    className="scale-90 origin-left w-[110%]"
+                                />
+                            </div>
+                        ))}
+                        {['gratuity', 'insurance', 'nps', 'profTax'].map(field => (
+                            <div key={field}>
+                                <label className="block text-xs text-gray-500 mb-1 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+                                <Input
+                                    value={offer.inputs[field]}
+                                    onChange={(e) => handleInputChange(setOffer, offer, field, e.target.value)}
+                                    className="scale-90 origin-left w-[110%]"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <div className="max-w-5xl mx-auto">
             <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl dark:shadow-none border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Compare CTC Offers</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8">Compare two salary offers side by side</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-8">Compare two salary offers side by side with detailed component analysis.</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     {/* Offer 1 */}
@@ -125,6 +285,7 @@ const CompareOffers = () => {
                                     <option value="old">Old Regime</option>
                                 </select>
                             </div>
+                            {renderAdvancedOptions(offer1, setOffer1, 'Offer 1')}
                         </div>
                     </div>
 
@@ -153,6 +314,7 @@ const CompareOffers = () => {
                                     <option value="old">Old Regime</option>
                                 </select>
                             </div>
+                            {renderAdvancedOptions(offer2, setOffer2, 'Offer 2')}
                         </div>
                     </div>
                 </div>
