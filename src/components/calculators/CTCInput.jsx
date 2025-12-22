@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from '../shared/Input';
 import { numberToWordsIndian, f_simple, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import Tooltip from '../shared/Tooltip';
 
 const CTCInput = ({
@@ -13,6 +13,8 @@ const CTCInput = ({
     results,
     percentageError
 }) => {
+
+    const [showMore, setShowMore] = React.useState(false);
 
     const handleCtcChange = (e) => {
         let val = e.target.value;
@@ -145,6 +147,20 @@ const CTCInput = ({
                     />
 
                     <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        DA
+                        <Tooltip content={getTooltipText('DA')}>
+                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                        </Tooltip>
+                    </label>
+                    <Input
+                        type={inputMode === 'amount' ? 'text' : 'number'}
+                        value={getInputValue('da')}
+                        onChange={(e) => handleInputChange('da', e.target.value)}
+                        className={inputClass}
+                        min="0"
+                    />
+
+                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                         Employee PF
                         <Tooltip content={getTooltipText('Employee PF')}>
                             <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
@@ -182,76 +198,6 @@ const CTCInput = ({
                     />
 
                     <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                        Gratuity
-                        <Tooltip content={getTooltipText('Gratuity')}>
-                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
-                        </Tooltip>
-                    </label>
-                    <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
-                        value={getInputValue('gratuity')}
-                        onChange={(e) => handleInputChange('gratuity', e.target.value)}
-                        className={inputClass}
-                        min="0"
-                    />
-
-                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                        Insurance
-                        <Tooltip content="Enter amount for Insurance">
-                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
-                        </Tooltip>
-                    </label>
-                    <Input
-                        type="text"
-                        value={formatIndianNumber(inputs.insurance)}
-                        onChange={(e) => handleInputChange('insurance', e.target.value)}
-                        className={inputClass}
-                        min="0"
-                    />
-
-                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                        Other Deductions
-                        <Tooltip content={getTooltipText('Other Deductions')}>
-                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
-                        </Tooltip>
-                    </label>
-                    <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
-                        value={getInputValue('other')}
-                        onChange={(e) => handleInputChange('other', e.target.value)}
-                        className={inputClass}
-                        min="0"
-                    />
-
-                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                        NPS
-                        <Tooltip content={getTooltipText('NPS')}>
-                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
-                        </Tooltip>
-                    </label>
-                    <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
-                        value={getInputValue('nps')}
-                        onChange={(e) => handleInputChange('nps', e.target.value)}
-                        className={inputClass}
-                        min="0"
-                    />
-
-                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                        Professional Tax
-                        <Tooltip content="Enter amount for Professional Tax">
-                            <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
-                        </Tooltip>
-                    </label>
-                    <Input
-                        type="text"
-                        value={formatIndianNumber(inputs.profTax)}
-                        onChange={(e) => handleInputChange('profTax', e.target.value)}
-                        className={inputClass}
-                        min="0"
-                    />
-
-                    <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                         Special Allowance
                         <Tooltip content={getTooltipText('Special Allowance')}>
                             <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
@@ -264,6 +210,94 @@ const CTCInput = ({
                         readOnly
                         className={inputClass}
                     />
+
+                    {/* Show More / Show Less Button */}
+                    <div className="col-span-2 flex justify-center py-2">
+                        <button
+                            type="button"
+                            onClick={() => setShowMore(!showMore)}
+                            className="flex items-center text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors"
+                        >
+                            {showMore ? 'Show Less' : 'Show More'}
+                            {showMore ? <ChevronUp size={16} className="ml-1" /> : <ChevronDown size={16} className="ml-1" />}
+                        </button>
+                    </div>
+
+                    {showMore && (
+                        <>
+                            <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                Gratuity
+                                <Tooltip content={getTooltipText('Gratuity')}>
+                                    <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                                </Tooltip>
+                            </label>
+                            <Input
+                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                value={getInputValue('gratuity')}
+                                onChange={(e) => handleInputChange('gratuity', e.target.value)}
+                                className={inputClass}
+                                min="0"
+                            />
+
+                            <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                Insurance
+                                <Tooltip content="Enter amount for Insurance">
+                                    <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                                </Tooltip>
+                            </label>
+                            <Input
+                                type="text"
+                                value={formatIndianNumber(inputs.insurance)}
+                                onChange={(e) => handleInputChange('insurance', e.target.value)}
+                                className={inputClass}
+                                min="0"
+                            />
+
+                            <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                Other Deductions
+                                <Tooltip content={getTooltipText('Other Deductions')}>
+                                    <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                                </Tooltip>
+                            </label>
+                            <Input
+                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                value={getInputValue('other')}
+                                onChange={(e) => handleInputChange('other', e.target.value)}
+                                className={inputClass}
+                                min="0"
+                            />
+
+                            <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                NPS
+                                <Tooltip content={getTooltipText('NPS')}>
+                                    <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                                </Tooltip>
+                            </label>
+                            <Input
+                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                value={getInputValue('nps')}
+                                onChange={(e) => handleInputChange('nps', e.target.value)}
+                                className={inputClass}
+                                min="0"
+                            />
+
+                            <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                Professional Tax
+                                <Tooltip content="Enter amount for Professional Tax">
+                                    <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                                </Tooltip>
+                            </label>
+                            <Input
+                                type="text"
+                                value={formatIndianNumber(inputs.profTax)}
+                                onChange={(e) => handleInputChange('profTax', e.target.value)}
+                                className={inputClass}
+                                min="0"
+                            />
+                        </>
+                    )}
+
+
                 </div>
             </div>
         </div>

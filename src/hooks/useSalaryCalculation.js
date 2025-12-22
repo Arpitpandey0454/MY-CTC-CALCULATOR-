@@ -19,7 +19,8 @@ export const useSalaryCalculation = () => {
             insurance: params.get('insurance'),
             other: params.get('other'),
             nps: params.get('nps'),
-            profTax: params.get('profTax')
+            profTax: params.get('profTax'),
+            da: params.get('da')
         };
     };
 
@@ -45,7 +46,9 @@ export const useSalaryCalculation = () => {
         insurance: urlState?.insurance || 0, // Always Amount
         other: urlState?.other || 0,
         nps: urlState?.nps || 0,
-        profTax: urlState?.profTax || 2400 // Always Amount, default 2400
+        nps: urlState?.nps || 0,
+        profTax: urlState?.profTax || 2400, // Always Amount, default 2400
+        da: urlState?.da || 10
     });
 
     const [results, setResults] = useState(null);
@@ -128,7 +131,7 @@ export const useSalaryCalculation = () => {
 
             // Dependent on CTC (% of CTC -> Amount)
             // Other (Insurance and ProfTax are always Amount now)
-            ['other'].forEach(key => {
+            ['other', 'da'].forEach(key => {
                 newInputs[key] = ((parseFloat(inputs[key]) / 100) * ctcVal).toFixed(0);
             });
 
@@ -147,7 +150,7 @@ export const useSalaryCalculation = () => {
 
             // Dependent on CTC (Amount -> % of CTC)
             // Other (Insurance and ProfTax are always Amount now)
-            ['other'].forEach(key => {
+            ['other', 'da'].forEach(key => {
                 const val = parseFloat(inputs[key]) || 0;
                 newInputs[key] = ctcVal > 0 ? parseFloat(((val / ctcVal) * 100).toFixed(2)).toString() : 0;
             });
@@ -213,7 +216,7 @@ export const useSalaryCalculation = () => {
             setPercentageError(null);
         }
 
-        let basic, hra, empPF, emplrPF, gratuity, insurance, other, nps, profTax;
+        let basic, hra, empPF, emplrPF, gratuity, insurance, other, nps, profTax, da;
 
         // Prof Tax and Insurance are always taken directly as amount
         profTax = parseFloat(inputs.profTax) || 0;
@@ -236,6 +239,7 @@ export const useSalaryCalculation = () => {
             // Components dependent on CTC
             // Insurance and ProfTax are handled as Amount above
             other = (parseFloat(inputs.other) || 0) / 100 * ctcValue;
+            da = (parseFloat(inputs.da) || 0) / 100 * ctcValue;
         } else {
             basic = parseFloat(inputs.basic) || 0;
             hra = parseFloat(inputs.hra) || 0;
@@ -244,17 +248,18 @@ export const useSalaryCalculation = () => {
             gratuity = parseFloat(inputs.gratuity) || 0;
             // Insurance and ProfTax are handled as Amount above
             other = parseFloat(inputs.other) || 0;
+            da = parseFloat(inputs.da) || 0;
 
             let npsRaw = parseFloat(inputs.nps) || 0;
             let npsLimit = basic * 0.14;
             nps = Math.min(npsRaw, npsLimit);
         }
 
-        // Special Allowance = CTC - (Basic + HRA + Employer PF + Gratuity + Insurance + NPS + Other Deductions)
-        const employerComponents = basic + hra + emplrPF + gratuity + insurance + nps + other;
+        // Special Allowance = CTC - (Basic + HRA + Employer PF + Gratuity + Insurance + NPS + Other Deductions + DA)
+        const employerComponents = basic + hra + emplrPF + gratuity + insurance + nps + other + da;
         const special = Math.max(0, ctcValue - employerComponents);
 
-        const grossSalary = basic + hra + special;
+        const grossSalary = basic + hra + da + special;
 
         // Deductions
         const standardDeduction = 50000;
@@ -292,7 +297,7 @@ export const useSalaryCalculation = () => {
         setResults({
             ctc: ctcValue,
             taxRegime,
-            components: { basic, hra, special },
+            components: { basic, hra, special, da },
             grossSalary,
             employerPF: emplrPF,
             employerGratuity: gratuity,
