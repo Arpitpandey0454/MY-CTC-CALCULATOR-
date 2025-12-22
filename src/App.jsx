@@ -21,6 +21,8 @@ function App() {
     }
   }, []);
 
+  const [additionalTab, setAdditionalTab] = useState('pf');
+
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
     const url = new URL(window.location);
@@ -41,14 +43,14 @@ function App() {
       case 'hike':
         return <HikeCalculator />;
       case 'additional':
-        return <AdditionalCalculators />;
+        return <AdditionalCalculators activeSubTab={additionalTab} />;
       default:
         return <CTCCalculator />;
     }
   };
 
   return (
-    <Layout activeTab={activeTab} setActiveTab={handleTabChange}>
+    <Layout activeTab={activeTab} setActiveTab={handleTabChange} additionalTab={additionalTab} setAdditionalTab={setAdditionalTab}>
       {renderContent()}
     </Layout>
   );

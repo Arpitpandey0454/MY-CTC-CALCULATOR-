@@ -25,8 +25,18 @@ const Button = ({ children, onClick }) => (
     </button>
 );
 
-const AdditionalCalculators = () => {
-    const [activeTab, setActiveTab] = useState('pf');
+const AdditionalCalculators = ({ activeSubTab }) => {
+    const [localActiveTab, setLocalActiveTab] = useState('pf');
+
+    // Sync prop with local state if provided
+    React.useEffect(() => {
+        if (activeSubTab) {
+            setLocalActiveTab(activeSubTab);
+        }
+    }, [activeSubTab]);
+
+    const activeTab = activeSubTab || localActiveTab;
+    const setActiveTab = setLocalActiveTab; // Internal clicks just update local unless driven by parent re-render
 
     const tabs = [
         { id: 'pf', label: 'PF Calculator' },
