@@ -233,7 +233,7 @@ const ReverseCTC = () => {
     return (
         <div className="max-w-5xl mx-auto">
             {/* Main Container Card */}
-            <div id="reverse-ctc-container" className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
+            <div id="reverse-ctc-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
 
                 {/* Header Section */}
                 <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
