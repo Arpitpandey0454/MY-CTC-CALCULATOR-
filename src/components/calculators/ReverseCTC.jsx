@@ -244,15 +244,30 @@ const ReverseCTC = () => {
                         </p>
                     </div>
                     {results && (
-                        <div className="flex gap-2">
-                            <button onClick={handleDownloadPDF} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors" title="Download PDF">
-                                <FileText size={20} />
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={handleDownloadPDF}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download breakdown as PDF"
+                            >
+                                <Download size={18} />
+                                <span>PDF</span>
                             </button>
-                            <button onClick={handleDownloadExcel} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors" title="Download Excel">
-                                <FileSpreadsheet size={20} />
+                            <button
+                                onClick={handleDownloadExcel}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download breakdown as Excel"
+                            >
+                                <FileSpreadsheet size={18} />
+                                <span>Excel</span>
                             </button>
-                            <button onClick={() => setIsShareModalOpen(true)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors" title="Share">
-                                <Share2 size={20} />
+                            <button
+                                onClick={() => setIsShareModalOpen(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Share this calculation"
+                            >
+                                <Share2 size={18} />
+                                <span>Share</span>
                             </button>
                         </div>
                     )}
