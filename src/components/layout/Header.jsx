@@ -59,7 +59,7 @@ const Header = ({ activeTab, setActiveTab, additionalTab, setAdditionalTab }) =>
                 : 'bg-gradient-to-r from-teal-50/80 to-blue-50/80 dark:from-slate-900/90 dark:to-slate-800/90 backdrop-blur-md border-b border-gray-200/80 dark:border-white/10 lg:rounded-bl-[30px] lg:rounded-br-[30px] py-3'
                 }`}
         >
-            <div className={`max-w-5xl mx-auto flex justify-between items-center px-4 sm:px-6 ${isScrolled ? 'max-w-[95%]' : ''}`}>
+            <div className="max-w-[95%] mx-auto flex justify-between items-center px-4 sm:px-6">
 
                 <div className="flex items-center gap-3">
                     {/* Placeholder for Logo if missing */}
@@ -131,8 +131,8 @@ const Header = ({ activeTab, setActiveTab, additionalTab, setAdditionalTab }) =>
                                                         setAdditionalTab(subTab.id);
                                                     }}
                                                     className={`w-full text-left px-4 py-2 text-sm rounded-lg transition-colors ${activeTab === 'additional' && additionalTab === subTab.id
-                                                            ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 font-medium'
-                                                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100/80 dark:hover:bg-gray-800/80'
+                                                        ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 font-medium'
+                                                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100/80 dark:hover:bg-gray-800/80'
                                                         }`}
                                                 >
                                                     {subTab.label}
