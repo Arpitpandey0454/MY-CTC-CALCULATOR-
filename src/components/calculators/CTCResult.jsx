@@ -78,7 +78,7 @@ export const CTCResultSummary = ({ results }) => {
                 </div>
             </div>
 
-            <div className="max-h-64 sm:max-h-72 flex justify-center my-4">
+            <div className="max-h-64 sm:max-h-72 flex justify-center my-24">
                 <Pie data={chartData} options={chartOptions} />
             </div>
 

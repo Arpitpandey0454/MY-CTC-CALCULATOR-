@@ -174,28 +174,7 @@ const CTCInput = ({
                         min="0"
                     />
 
-                    <div className="flex items-center">
-                        <input
-                            type="checkbox"
-                            checked={includeEmployerPF}
-                            onChange={(e) => setIncludeEmployerPF(e.target.checked)}
-                            className="h-4 w-4 text-teal-600 dark:text-teal-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 focus:ring-teal-500 mr-2"
-                        />
-                        <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                            Employer PF
-                            <Tooltip content={getTooltipText('Employer PF')}>
-                                <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
-                            </Tooltip>
-                        </label>
-                    </div>
-                    <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
-                        value={getInputValue('emplrPF')}
-                        onChange={(e) => handleInputChange('emplrPF', e.target.value)}
-                        className={inputClass}
-                        min="0"
-                        readOnly={true}
-                    />
+
 
                     <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                         Special Allowance
@@ -225,6 +204,29 @@ const CTCInput = ({
 
                     {showMore && (
                         <>
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={includeEmployerPF}
+                                    onChange={(e) => setIncludeEmployerPF(e.target.checked)}
+                                    className="h-4 w-4 text-teal-600 dark:text-teal-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 focus:ring-teal-500 mr-2"
+                                />
+                                <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                    Employer PF
+                                    <Tooltip content={getTooltipText('Employer PF')}>
+                                        <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                                    </Tooltip>
+                                </label>
+                            </div>
+                            <Input
+                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                value={getInputValue('emplrPF')}
+                                onChange={(e) => handleInputChange('emplrPF', e.target.value)}
+                                className={inputClass}
+                                min="0"
+                                readOnly={true}
+                            />
+
                             <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                                 Gratuity
                                 <Tooltip content={getTooltipText('Gratuity')}>
