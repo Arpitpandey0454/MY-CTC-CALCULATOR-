@@ -104,6 +104,15 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
         deductions,
     } = results;
 
+    const totalDeductionsValue = (deductions.employeePF || 0) +
+        (employerPF || 0) +
+        (employerGratuity || 0) +
+        (insuranceEmployer || 0) +
+        (deductions.npsDeduction || 0) +
+        (otherEmployer || 0);
+
+    const calculatedGrossTaxableIncome = ctc - totalDeductionsValue;
+
     return (
         <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -136,7 +145,7 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
                     <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Summary</h3>
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Total CTC</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(ctc)}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Taxable Income</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(grossSalary)}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Taxable Income</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(calculatedGrossTaxableIncome)}</span></div>
                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Standard Deduction</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.taxCalc.standardDeduction)}</span></div>
                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Professional Tax</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(deductions.profTax)}</span></div>
 
