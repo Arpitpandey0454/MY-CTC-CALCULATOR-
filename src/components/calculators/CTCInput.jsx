@@ -21,6 +21,7 @@ const CTCInput = ({
         let val = e.target.value;
         // Remove commas for parsing
         const rawVal = parseIndianNumber(val);
+        if (rawVal > 100000000) rawVal = 100000000;
         setCtc(rawVal);
     };
 

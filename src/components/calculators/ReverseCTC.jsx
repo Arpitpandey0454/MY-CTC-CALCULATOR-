@@ -117,7 +117,10 @@ const ReverseCTC = () => {
 
     const handleCalculate = () => {
         const target = parseFloat(targetInHand) || 0;
-        if (target === 0) return;
+        if (target <= 0) {
+            setResults(null); // Clear results if 0
+            return;
+        }
 
         let minCTC = target * 12;
         let maxCTC = target * 24;
@@ -286,7 +289,11 @@ const ReverseCTC = () => {
                                     type="text"
                                     className="w-full bg-transparent text-gray-700 dark:text-gray-200 font-medium text-right focus:outline-none"
                                     value={formatIndianNumber(targetInHand)}
-                                    onChange={(e) => setTargetInHand(parseIndianNumber(e.target.value))}
+                                    onChange={(e) => {
+                                        let val = parseIndianNumber(e.target.value);
+                                        if (val > 5000000) val = 5000000;
+                                        setTargetInHand(val);
+                                    }}
                                 />
                             </div>
                             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(targetInHand)}</p>

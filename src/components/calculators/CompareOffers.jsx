@@ -270,7 +270,11 @@ const CompareOffers = () => {
                                     type="text"
                                     placeholder="50,00,000"
                                     value={formatIndianNumber(offer1.ctc)}
-                                    onChange={(e) => setOffer1({ ...offer1, ctc: parseIndianNumber(e.target.value) })}
+                                    onChange={(e) => {
+                                        let val = parseIndianNumber(e.target.value);
+                                        if (val > 100000000) val = 100000000;
+                                        setOffer1({ ...offer1, ctc: val });
+                                    }}
                                 />
                                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(offer1.ctc)}</p>
                             </div>
@@ -299,7 +303,11 @@ const CompareOffers = () => {
                                     type="text"
                                     placeholder="55,00,000"
                                     value={formatIndianNumber(offer2.ctc)}
-                                    onChange={(e) => setOffer2({ ...offer2, ctc: parseIndianNumber(e.target.value) })}
+                                    onChange={(e) => {
+                                        let val = parseIndianNumber(e.target.value);
+                                        if (val > 100000000) val = 100000000;
+                                        setOffer2({ ...offer2, ctc: val });
+                                    }}
                                 />
                                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(offer2.ctc)}</p>
                             </div>

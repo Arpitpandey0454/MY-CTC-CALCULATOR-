@@ -173,7 +173,10 @@ const HikeCalculator = () => {
     const handleCalculate = () => {
         const current = parseFloat(currentCTC) || 0;
         const hike = parseFloat(hikePercentage) || 0;
-        if (!current) return;
+        if (!current) {
+            setResults(null);
+            return;
+        }
 
         const newCTC = current * (1 + hike / 100);
 
@@ -242,7 +245,11 @@ const HikeCalculator = () => {
                         <Input
                             type="text"
                             value={formatIndianNumber(currentCTC)}
-                            onChange={(e) => setCurrentCTC(parseIndianNumber(e.target.value))}
+                            onChange={(e) => {
+                                let val = parseIndianNumber(e.target.value);
+                                if (val > 100000000) val = 100000000;
+                                setCurrentCTC(val);
+                            }}
                             placeholder="e.g. 12,00,000"
                             className="text-lg"
                         />

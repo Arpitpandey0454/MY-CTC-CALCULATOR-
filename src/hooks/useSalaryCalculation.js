@@ -198,6 +198,12 @@ export const useSalaryCalculation = () => {
     const calculateSalary = () => {
         const ctcValue = parseFloat(ctc) || 0;
 
+        if (ctcValue <= 0) {
+            setResults(null);
+            setPercentageError(null);
+            return;
+        }
+
         // Percentage Validation
         if (inputMode === 'percentage') {
             const basicP = parseFloat(inputs.basic) || 0;
