@@ -10,6 +10,7 @@ const CTCInput = ({
     inputMode, handleModeChange,
     inputs, updateInput,
     includeEmployerPF, setIncludeEmployerPF,
+    includeGratuity, setIncludeGratuity,
     results,
     percentageError
 }) => {
@@ -24,7 +25,6 @@ const CTCInput = ({
     };
 
     const handleInputChange = (key, value) => {
-        // Insurance and ProfTax are always amounts
         if (key === 'insurance' || key === 'profTax') {
             updateInput(key, parseIndianNumber(value));
             return;
@@ -227,12 +227,20 @@ const CTCInput = ({
                                 readOnly={true}
                             />
 
-                            <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                                Gratuity
-                                <Tooltip content={getTooltipText('Gratuity')}>
-                                    <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
-                                </Tooltip>
-                            </label>
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={includeGratuity}
+                                    onChange={(e) => setIncludeGratuity(e.target.checked)}
+                                    className="h-4 w-4 text-teal-600 dark:text-teal-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 focus:ring-teal-500 mr-2"
+                                />
+                                <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                    Gratuity
+                                    <Tooltip content={getTooltipText('Gratuity')}>
+                                        <HelpCircle size={14} className="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-help" />
+                                    </Tooltip>
+                                </label>
+                            </div>
                             <Input
                                 type={inputMode === 'amount' ? 'text' : 'number'}
                                 value={getInputValue('gratuity')}

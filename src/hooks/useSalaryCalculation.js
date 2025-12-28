@@ -11,6 +11,7 @@ export const useSalaryCalculation = () => {
             regime: params.get('regime'),
             mode: params.get('mode'),
             incPF: params.get('incPF') === 'true',
+            incGratuity: params.get('incGratuity') === 'true',
             basic: params.get('basic'),
             hra: params.get('hra'),
             empPF: params.get('empPF'),
@@ -30,6 +31,7 @@ export const useSalaryCalculation = () => {
     const [taxRegime, setTaxRegime] = useState(urlState?.regime || 'new');
     const [inputMode, setInputMode] = useState(urlState?.mode || 'percentage'); // 'percentage' | 'amount'
     const [includeEmployerPF, setIncludeEmployerPF] = useState(urlState ? urlState.incPF : true);
+    const [includeGratuity, setIncludeGratuity] = useState(urlState ? urlState.incGratuity : false);
 
     // Store current input values. Interpretation depends on inputMode.
     // In 'percentage' mode:
@@ -229,7 +231,7 @@ export const useSalaryCalculation = () => {
             hra = (parseFloat(inputs.hra) || 0) / 100 * basic;
             empPF = (parseFloat(inputs.empPF) || 0) / 100 * basic;
             emplrPF = includeEmployerPF ? ((parseFloat(inputs.emplrPF) || 0) / 100 * basic) : 0;
-            gratuity = (parseFloat(inputs.gratuity) || 0) / 100 * basic;
+            gratuity = includeGratuity ? ((parseFloat(inputs.gratuity) || 0) / 100 * basic) : 0;
 
             // NPS Limit Check (Max 14% of Basic)
             let npsRaw = (parseFloat(inputs.nps) || 0) / 100 * basic;
@@ -245,7 +247,7 @@ export const useSalaryCalculation = () => {
             hra = parseFloat(inputs.hra) || 0;
             empPF = parseFloat(inputs.empPF) || 0;
             emplrPF = includeEmployerPF ? (parseFloat(inputs.emplrPF) || 0) : 0;
-            gratuity = parseFloat(inputs.gratuity) || 0;
+            gratuity = includeGratuity ? (parseFloat(inputs.gratuity) || 0) : 0;
             // Insurance and ProfTax are handled as Amount above
             other = parseFloat(inputs.other) || 0;
             da = parseFloat(inputs.da) || 0;
@@ -313,7 +315,7 @@ export const useSalaryCalculation = () => {
 
     useEffect(() => {
         calculateSalary();
-    }, [ctc, taxRegime, inputMode, inputs, includeEmployerPF]);
+    }, [ctc, taxRegime, inputMode, inputs, includeEmployerPF, includeGratuity]);
 
     const generateShareUrl = () => {
         const params = new URLSearchParams();
@@ -322,6 +324,7 @@ export const useSalaryCalculation = () => {
         params.set('regime', taxRegime);
         params.set('mode', inputMode);
         params.set('incPF', includeEmployerPF);
+        params.set('incGratuity', includeGratuity);
 
         Object.entries(inputs).forEach(([key, value]) => {
             params.set(key, value);
@@ -338,6 +341,7 @@ export const useSalaryCalculation = () => {
         inputMode, handleModeChange,
         inputs, updateInput,
         includeEmployerPF, setIncludeEmployerPF,
+        includeGratuity, setIncludeGratuity,
         results,
         generateShareUrl,
         percentageError
