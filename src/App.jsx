@@ -43,7 +43,7 @@ function App() {
       case 'hike':
         return <HikeCalculator />;
       case 'additional':
-        return <AdditionalCalculators activeSubTab={additionalTab} />;
+        return <AdditionalCalculators activeSubTab={additionalTab} onTabChange={setAdditionalTab} />;
       default:
         return <CTCCalculator />;
     }
