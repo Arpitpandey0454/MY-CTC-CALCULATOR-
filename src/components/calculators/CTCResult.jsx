@@ -42,6 +42,9 @@ export const CTCResultSummary = ({ results }) => {
 
     const chartOptions = {
         responsive: true,
+        layout: {
+            padding: 20
+        },
         plugins: {
             legend: {
                 position: 'bottom',

@@ -342,7 +342,7 @@ const ReverseCTC = () => {
                                 <p className="text-center text-gray-500 dark:text-gray-500 text-sm mt-2">Gives Net Monthly: <span className="font-medium text-gray-600 dark:text-gray-400">{f_simple(results.netInHandMonthly)}</span></p>
                             </div>
                             <div className="max-h-64 sm:max-h-72 flex justify-center mb-4">
-                                <Pie data={chartData} options={{ responsive: true, plugins: { legend: { position: 'bottom', labels: { color: document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151', font: { size: 10 } } } } }} />
+                                <Pie data={chartData} options={{ responsive: true, layout: { padding: 20 }, plugins: { legend: { position: 'bottom', labels: { color: document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151', font: { size: 10 } } } } }} />
                             </div>
 
                             {/* Earnings Section Moved Here */}
