@@ -61,16 +61,16 @@ const Header = ({ activeTab, setActiveTab, additionalTab, setAdditionalTab }) =>
         >
             <div className="max-w-[95%] mx-auto flex justify-between items-center px-4 sm:px-6">
 
-                <div className="flex items-center gap-3">
+                <button onClick={() => setActiveTab('ctc-to-inhand')} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     {/* Placeholder for Logo if missing */}
                     <div className="h-[50px] w-[50px] rounded-xl flex items-center justify-center text-white font-bold text-xl ">
                         <img src={logo} alt="Logo" className="h-full w-full object-contain" />
                     </div>
 
-                    <span className="text-2xl font-extrabold uppercase tracking-wider bg-gradient-to-r from-teal-500 via-blue-500 to-indigo-600 bg-clip-text text-transparent leading-none">
+                    <span className="text-2xl font-extrabold uppercase tracking-wider bg-gradient-to-r from-teal-500 via-blue-500 to-indigo-600 bg-clip-text text-transparent leading-none text-left">
                         MY CTC <br className="hidden sm:inline" /> CALCULATOR
                     </span>
-                </div>
+                </button>
 
                 <div className="flex items-center space-x-2">
                     <div className="hidden sm:flex items-center space-x-2 text-sm">
