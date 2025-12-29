@@ -485,51 +485,111 @@ const CompareOffers = () => {
                 {/* Comparison Results */}
                 {results && (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-teal-50 dark:bg-teal-950/30 p-6 rounded-2xl border border-teal-200 dark:border-teal-700">
-                                <h4 className="font-semibold text-teal-900 dark:text-teal-100 mb-4">Offer 1 Summary</h4>
-                                <div className="space-y-3 text-sm">
-                                    <div className="flex justify-between"><span className="text-gray-700 dark:text-gray-300">Gross Salary</span><span className="font-bold text-gray-900 dark:text-gray-100">{f_simple(results.offer1.grossSalary)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-700 dark:text-gray-300">Total Deductions</span><span className="font-bold text-gray-900 dark:text-gray-100">{f_simple(results.offer1.totalDeductions)}</span></div>
-                                    <div className="flex justify-between border-t border-teal-200 dark:border-teal-700 pt-2"><span className="text-gray-700 dark:text-gray-300 font-bold">In-hand (Yearly)</span><span className="font-bold text-teal-600 dark:text-teal-400">{f_simple(results.offer1.netInHandYearly)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-700 dark:text-gray-300 font-bold">In-hand (Monthly)</span><span className="font-bold text-teal-600 dark:text-teal-400">{f_simple(results.offer1.netInHandMonthly)}</span></div>
-                                </div>
-                            </div>
+                        <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold uppercase text-xs">
+                                    <tr>
+                                        <th className="px-6 py-4">Metric</th>
+                                        <th className="px-6 py-4 text-teal-700 dark:text-teal-400 bg-teal-50/50 dark:bg-teal-900/20">Offer 1</th>
+                                        <th className="px-6 py-4 text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20">Offer 2</th>
+                                        <th className="px-6 py-4 text-center">Difference</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900/40">
+                                    {/* CTC */}
+                                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                        <td className="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">Annual CTC (Input)</td>
+                                        <td className="px-6 py-4 text-teal-900 dark:text-teal-100 font-semibold bg-teal-50/30 dark:bg-teal-900/10">
+                                            {f_simple(offer1.ctc)}
+                                        </td>
+                                        <td className="px-6 py-4 text-blue-900 dark:text-blue-100 font-semibold bg-blue-50/30 dark:bg-blue-900/10">
+                                            {f_simple(offer2.ctc)}
+                                        </td>
+                                        <td className={`px-6 py-4 text-center font-bold ${results.diff.ctc > 0 ? 'text-green-600 dark:text-green-400' : results.diff.ctc < 0 ? 'text-red-500 dark:text-red-400' : 'text-gray-500'}`}>
+                                            {results.diff.ctc > 0 ? '+' : ''}{f_simple(results.diff.ctc)}
+                                        </td>
+                                    </tr>
 
-                            <div className="bg-blue-50 dark:bg-blue-950/30 p-6 rounded-2xl border border-blue-200 dark:border-blue-700">
-                                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-4">Offer 2 Summary</h4>
-                                <div className="space-y-3 text-sm">
-                                    <div className="flex justify-between"><span className="text-gray-700 dark:text-gray-300">Gross Salary</span><span className="font-bold text-gray-900 dark:text-gray-100">{f_simple(results.offer2.grossSalary)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-700 dark:text-gray-300">Total Deductions</span><span className="font-bold text-gray-900 dark:text-gray-100">{f_simple(results.offer2.totalDeductions)}</span></div>
-                                    <div className="flex justify-between border-t border-blue-200 dark:border-blue-700 pt-2"><span className="text-gray-700 dark:text-gray-300 font-bold">In-hand (Yearly)</span><span className="font-bold text-blue-600 dark:text-blue-400">{f_simple(results.offer2.netInHandYearly)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-700 dark:text-gray-300 font-bold">In-hand (Monthly)</span><span className="font-bold text-blue-600 dark:text-blue-400">{f_simple(results.offer2.netInHandMonthly)}</span></div>
-                                </div>
-                            </div>
+                                    {/* Gross Salary */}
+                                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                        <td className="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">Gross Salary</td>
+                                        <td className="px-6 py-4 text-gray-800 dark:text-gray-200 bg-teal-50/30 dark:bg-teal-900/10">
+                                            {f_simple(results.offer1.grossSalary)}
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-800 dark:text-gray-200 bg-blue-50/30 dark:bg-blue-900/10">
+                                            {f_simple(results.offer2.grossSalary)}
+                                        </td>
+                                        <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    {/* Deductions */}
+                                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                        <td className="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">Total Deductions</td>
+                                        <td className="px-6 py-4 text-red-600/80 dark:text-red-400/80 bg-teal-50/30 dark:bg-teal-900/10">
+                                            {f_simple(results.offer1.totalDeductions)}
+                                        </td>
+                                        <td className="px-6 py-4 text-red-600/80 dark:text-red-400/80 bg-blue-50/30 dark:bg-blue-900/10">
+                                            {f_simple(results.offer2.totalDeductions)}
+                                        </td>
+                                        <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    {/* Net In-Hand Yearly */}
+                                    <tr className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 font-bold border-t-2 border-gray-100 dark:border-gray-700">
+                                        <td className="px-6 py-4 text-gray-900 dark:text-white">Net In-Hand (Yearly)</td>
+                                        <td className="px-6 py-4 text-teal-700 dark:text-teal-400 text-lg bg-teal-50/50 dark:bg-teal-900/20 shadow-inner">
+                                            {f_simple(results.offer1.netInHandYearly)}
+                                        </td>
+                                        <td className="px-6 py-4 text-blue-700 dark:text-blue-400 text-lg bg-blue-50/50 dark:bg-blue-900/20 shadow-inner">
+                                            {f_simple(results.offer2.netInHandYearly)}
+                                        </td>
+                                        <td className={`px-6 py-4 text-center text-lg ${results.diff.inHand > 0 ? 'text-green-600 dark:text-green-400' : results.diff.inHand < 0 ? 'text-red-500 dark:text-red-400' : 'text-gray-400'}`}>
+                                            {results.diff.inHand > 0 ? '+' : ''}{f_simple(results.diff.inHand)}
+                                        </td>
+                                    </tr>
+
+                                    {/* Net In-Hand Monthly */}
+                                    <tr className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 font-bold">
+                                        <td className="px-6 py-4 text-gray-900 dark:text-white border-b-0">Net In-Hand (Monthly)</td>
+                                        <td className="px-6 py-4 text-teal-700 dark:text-teal-400 text-lg bg-teal-50/50 dark:bg-teal-900/20 shadow-inner border-b-0">
+                                            {f_simple(results.offer1.netInHandMonthly)}
+                                        </td>
+                                        <td className="px-6 py-4 text-blue-700 dark:text-blue-400 text-lg bg-blue-50/50 dark:bg-blue-900/20 shadow-inner border-b-0">
+                                            {f_simple(results.offer2.netInHandMonthly)}
+                                        </td>
+                                        <td className={`px-6 py-4 text-center text-lg border-b-0 ${results.diff.monthly > 0 ? 'text-green-600 dark:text-green-400' : results.diff.monthly < 0 ? 'text-red-500 dark:text-red-400' : 'text-gray-400'}`}>
+                                            {results.diff.monthly > 0 ? '+' : ''}{f_simple(results.diff.monthly)}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
 
-                        {/* Comparison Difference */}
-                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-6 rounded-2xl border border-green-200 dark:border-green-700">
-                            <h4 className="font-semibold text-green-900 dark:text-green-100 mb-4">Difference Analysis</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                <div>
-                                    <span className="text-gray-700 dark:text-gray-300">CTC Difference (Yearly)</span>
-                                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{(results.diff.ctc >= 0 ? '+' : '') + f_simple(results.diff.ctc)}</p>
-                                </div>
-                                <div>
-                                    <span className="text-gray-700 dark:text-gray-300">In-hand Difference (Yearly)</span>
-                                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{(results.diff.inHand >= 0 ? '+' : '') + f_simple(results.diff.inHand)}</p>
-                                </div>
-                                <div>
-                                    <span className="text-gray-700 dark:text-gray-300">Monthly In-hand Difference</span>
-                                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{(results.diff.monthly >= 0 ? '+' : '') + f_simple(results.diff.monthly)}</p>
-                                </div>
-                                <div>
-                                    <span className="text-gray-700 dark:text-gray-300">Better Offer</span>
-                                    <p className="text-xl font-bold text-green-600 dark:text-green-400">
-                                        {results.diff.inHand > 0 ? 'Offer 2 is Better' : results.diff.inHand < 0 ? 'Offer 1 is Better' : 'Equal'}
-                                    </p>
-                                </div>
-                            </div>
+                        {/* Summary Banner */}
+                        <div className={`p-6 rounded-2xl text-center border ${results.diff.inHand > 0
+                            ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                            : results.diff.inHand < 0
+                                ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800'
+                                : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                            }`}>
+                            <p className="text-gray-600 dark:text-gray-300 font-medium mb-1">Recommendation</p>
+                            <p className={`text-2xl font-bold ${results.diff.inHand > 0
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : results.diff.inHand < 0
+                                    ? 'text-teal-600 dark:text-teal-400'
+                                    : 'text-gray-600 dark:text-gray-400'
+                                }`}>
+                                {results.diff.inHand > 0 ? 'Offer 2 is Financially Better' : results.diff.inHand < 0 ? 'Offer 1 is Financially Better' : 'Both Offers are Equal'}
+                            </p>
+                            {Math.abs(results.diff.inHand) > 0 && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                    You will earn approximately <strong>{f_simple(Math.abs(results.diff.inHand))}</strong> more yearly with {results.diff.inHand > 0 ? 'Offer 2' : 'Offer 1'}.
+                                </p>
+                            )}
                         </div>
                     </div>
                 )}
