@@ -231,158 +231,169 @@ const HikeCalculator = () => {
 
 
     return (
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto">
             <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
                 <div className="text-left mb-10">
                     <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-3">Hike Calculator</h2>
                     <p className="text-gray-600 dark:text-gray-400">Visualize your salary growth with our advanced projection tool.</p>
                 </div>
 
-                {/* Primary Input Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Current Annual CTC</label>
-                        <Input
-                            type="text"
-                            value={formatIndianNumber(currentCTC)}
-                            onChange={(e) => {
-                                let val = parseIndianNumber(e.target.value);
-                                if (val > 100000000) val = 100000000;
-                                setCurrentCTC(val);
-                            }}
-                            placeholder="e.g. 12,00,000"
-                            className="text-lg"
-                        />
-                        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{currentCTC ? numberToWordsIndian(currentCTC) : 'Enter your current CTC'}</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                    {/* LEFT COLUMN: INPUTS */}
+                    <div>
+                        {/* Primary Input Section */}
+                        <div className="space-y-6 mb-8">
+                            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Current Annual CTC</label>
+                                <Input
+                                    type="text"
+                                    value={formatIndianNumber(currentCTC)}
+                                    onChange={(e) => {
+                                        let val = parseIndianNumber(e.target.value);
+                                        if (val > 100000000) val = 100000000;
+                                        setCurrentCTC(val);
+                                    }}
+                                    placeholder="e.g. 12,00,000"
+                                    className="text-lg"
+                                />
+                                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{currentCTC ? numberToWordsIndian(currentCTC) : 'Enter your current CTC'}</p>
+                            </div>
+
+                            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                                <div className="flex justify-between items-center mb-3">
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Expected Hike</label>
+                                    <span className="text-2xl font-bold text-teal-600 dark:text-teal-400">{hikePercentage || 0}%</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="200"
+                                    step="1"
+                                    value={hikePercentage}
+                                    onChange={(e) => setHikePercentage(e.target.value)}
+                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600 dark:bg-gray-700"
+                                />
+                                <div className="flex justify-between mt-2 text-xs text-gray-400">
+                                    <span>0%</span>
+                                    <span>50%</span>
+                                    <span>100%</span>
+                                    <span>200%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Advanced Toggle */}
+                        <div className="mb-10">
+                            <button
+                                onClick={() => setShowAdvanced(!showAdvanced)}
+                                className="flex items-center w-full justify-center text-sm font-medium text-gray-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 transition-colors bg-white dark:bg-gray-800 px-4 py-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
+                            >
+                                {showAdvanced ? 'Hide Advanced Options' : 'Configure Current Salary Structure'}
+                                {showAdvanced ? <ChevronUp size={16} className="ml-2" /> : <ChevronDown size={16} className="ml-2" />}
+                            </button>
+
+                            {showAdvanced && (
+                                <div className="mt-6 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 animate-in fade-in slide-in-from-top-4 duration-300">
+                                    <div className="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                                        <h3 className="font-semibold text-gray-800 dark:text-gray-200">Current Salary Structure</h3>
+                                        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                                            <button onClick={() => handleModeToggle('percentage')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'percentage' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>% Percent</button>
+                                            <button onClick={() => handleModeToggle('amount')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'amount' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>₹ Amount</button>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {Object.keys(inputs).map(field => (
+                                            <div key={field}>
+                                                <label className="block text-xs font-medium text-gray-500 mb-1 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
+                                                <Input
+                                                    value={inputs[field]}
+                                                    onChange={(e) => handleInputChange(field, e.target.value)}
+                                                    className="text-sm"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div className="flex justify-between items-center mb-3">
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Expected Hike</label>
-                            <span className="text-2xl font-bold text-teal-600 dark:text-teal-400">{hikePercentage || 0}%</span>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="200"
-                            step="1"
-                            value={hikePercentage}
-                            onChange={(e) => setHikePercentage(e.target.value)}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-teal-600 dark:bg-gray-700"
-                        />
-                        <div className="flex justify-between mt-2 text-xs text-gray-400">
-                            <span>0%</span>
-                            <span>50%</span>
-                            <span>100%</span>
-                            <span>200%</span>
-                        </div>
+                    {/* RIGHT COLUMN: RESULTS */}
+                    <div className="lg:pl-8 lg:border-l border-gray-200 dark:border-gray-700 min-h-full">
+                        {results ? (
+                            <div className="space-y-6">
+                                {/* Current Salary Card */}
+                                <div className="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-md transition-shadow">
+                                    <div className="absolute top-0 left-0 w-2 h-full bg-gray-300 dark:bg-gray-600"></div>
+                                    <h4 className="text-lg font-bold text-gray-700 dark:text-gray-200 mb-6 pl-4">Current Salary</h4>
+
+                                    <div className="space-y-6">
+                                        <div>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Annual CTC</p>
+                                            <p className="text-2xl font-bold text-gray-800 dark:text-white">{f_simple(results.current.ctc)}</p>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-xs text-gray-500 mb-1">Monthly In-hand</p>
+                                                <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{f_simple(results.current.netInHandMonthly)}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-500 mb-1">Yearly In-hand</p>
+                                                <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{f_simple(results.current.netInHandYearly)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Divider with Arrow */}
+                                <div className="flex justify-center">
+                                    <div className="bg-teal-50 dark:bg-teal-900/30 p-2 rounded-full transform rotate-90">
+                                        <ArrowRight className="text-teal-600 dark:text-teal-400" size={24} />
+                                    </div>
+                                </div>
+
+                                {/* Revised Salary Card */}
+                                <div className="bg-teal-50 dark:bg-teal-950/20 p-6 rounded-3xl shadow-sm border border-teal-100 dark:border-teal-800 relative overflow-hidden group hover:shadow-md transition-shadow">
+                                    <div className="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
+                                    <div className="flex justify-between items-start pl-4 mb-6">
+                                        <h4 className="text-lg font-bold text-teal-800 dark:text-teal-100">Revised Salary</h4>
+                                        <div className="bg-teal-200 dark:bg-teal-800 text-teal-800 dark:text-teal-100 text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                                            <TrendingUp size={12} className="mr-1" />
+                                            {hikePercentage}% Hike
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        <div>
+                                            <p className="text-sm text-teal-600 dark:text-teal-400 mb-1">New Annual CTC</p>
+                                            <p className="text-3xl font-bold text-teal-700 dark:text-teal-300">{f_simple(results.new.ctc)}</p>
+                                            <p className="text-xs text-teal-600/70 dark:text-teal-400/70 font-medium mt-1">+{f_simple(results.diff.ctc)} increase</p>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-xs text-teal-600/80 dark:text-teal-400/80 mb-1">Monthly In-hand</p>
+                                                <p className="text-xl font-bold text-teal-800 dark:text-teal-200">{f_simple(results.new.netInHandMonthly)}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-teal-600/80 dark:text-teal-400/80 mb-1">Yearly In-hand</p>
+                                                <p className="text-xl font-bold text-teal-800 dark:text-teal-200">{f_simple(results.new.netInHandYearly)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-center p-10 opacity-50">
+                                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-full mb-4">
+                                    <TrendingUp className="text-gray-400" size={32} />
+                                </div>
+                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Ready to Calculate</h3>
+                                <p className="text-sm text-gray-500">Enter your current CTC and expected hike to see the projection.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
-
-                {/* Advanced Toggle */}
-                <div className="mb-10">
-                    <button
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        className="flex items-center mx-auto text-sm font-medium text-gray-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 transition-colors bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-sm border border-gray-100 dark:border-gray-700"
-                    >
-                        {showAdvanced ? 'Hide Advanced Options' : 'Configure Current Salary Structure'}
-                        {showAdvanced ? <ChevronUp size={16} className="ml-2" /> : <ChevronDown size={16} className="ml-2" />}
-                    </button>
-
-                    {showAdvanced && (
-                        <div className="mt-6 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 animate-in fade-in slide-in-from-top-4 duration-300">
-                            <div className="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
-                                <h3 className="font-semibold text-gray-800 dark:text-gray-200">Current Salary Structure</h3>
-                                <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
-                                    <button onClick={() => handleModeToggle('percentage')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'percentage' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>% Percent</button>
-                                    <button onClick={() => handleModeToggle('amount')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'amount' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>₹ Amount</button>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                                {Object.keys(inputs).map(field => (
-                                    <div key={field}>
-                                        <label className="block text-xs font-medium text-gray-500 mb-1 capitalize">{field.replace(/([A-Z])/g, ' $1').trim()}</label>
-                                        <Input
-                                            value={inputs[field]}
-                                            onChange={(e) => handleInputChange(field, e.target.value)}
-                                            className="text-sm"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-
-                {/* Results Section */}
-                {results ? (
-                    <div className="grid grid-cols-1 md:grid-cols-11 gap-6 items-stretch">
-                        {/* Current Salary Card */}
-                        <div className="md:col-span-5 bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden group hover:shadow-md transition-shadow">
-                            <div className="absolute top-0 left-0 w-2 h-full bg-gray-300 dark:bg-gray-600"></div>
-                            <h4 className="text-lg font-bold text-gray-700 dark:text-gray-200 mb-6 pl-4">Current Salary</h4>
-
-                            <div className="space-y-6">
-                                <div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Annual CTC</p>
-                                    <p className="text-2xl font-bold text-gray-800 dark:text-white">{f_simple(results.current.ctc)}</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-xs text-gray-500 mb-1">Monthly In-hand</p>
-                                        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{f_simple(results.current.netInHandMonthly)}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-gray-500 mb-1">Yearly In-hand</p>
-                                        <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">{f_simple(results.current.netInHandYearly)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Middle Arrow / Indicator */}
-                        <div className="md:col-span-1 flex flex-col items-center justify-center py-4 md:py-0">
-                            <div className="bg-teal-50 dark:bg-teal-900/30 p-3 rounded-full hidden md:block">
-                                <ArrowRight className="text-teal-600 dark:text-teal-400" size={24} />
-                            </div>
-                            <div className="bg-teal-50 dark:bg-teal-900/30 p-3 rounded-full md:hidden transform rotate-90">
-                                <ArrowRight className="text-teal-600 dark:text-teal-400" size={24} />
-                            </div>
-                        </div>
-
-                        {/* Revised Salary Card */}
-                        <div className="md:col-span-5 bg-teal-50 dark:bg-teal-950/20 p-6 rounded-3xl shadow-sm border border-teal-100 dark:border-teal-800 relative overflow-hidden group hover:shadow-md transition-shadow">
-                            <div className="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
-                            <div className="flex justify-between items-start pl-4 mb-6">
-                                <h4 className="text-lg font-bold text-teal-800 dark:text-teal-100">Revised Salary</h4>
-                                <div className="bg-teal-200 dark:bg-teal-800 text-teal-800 dark:text-teal-100 text-xs font-bold px-2 py-1 rounded-full flex items-center">
-                                    <TrendingUp size={12} className="mr-1" />
-                                    {hikePercentage}% Hike
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div>
-                                    <p className="text-sm text-teal-600 dark:text-teal-400 mb-1">New Annual CTC</p>
-                                    <p className="text-3xl font-bold text-teal-700 dark:text-teal-300">{f_simple(results.new.ctc)}</p>
-                                    <p className="text-xs text-teal-600/70 dark:text-teal-400/70 font-medium mt-1">+{f_simple(results.diff.ctc)} increase</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-xs text-teal-600/80 dark:text-teal-400/80 mb-1">Monthly In-hand</p>
-                                        <p className="text-xl font-bold text-teal-800 dark:text-teal-200">{f_simple(results.new.netInHandMonthly)}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-teal-600/80 dark:text-teal-400/80 mb-1">Yearly In-hand</p>
-                                        <p className="text-xl font-bold text-teal-800 dark:text-teal-200">{f_simple(results.new.netInHandYearly)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
             </div>
         </div>
     );

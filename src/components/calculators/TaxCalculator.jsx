@@ -135,9 +135,9 @@ const TaxCalculator = () => {
         const oldFinal = oldTax + oldCess;
 
 
-        // --- NEW REGIME CALCULATION (AY 2025-26) ---
-        // Std Deduction increased to 75k for AY 25-26
-        const newStdDed = 75000;
+        // --- NEW REGIME CALCULATION ---
+        // Std Deduction: 50k for AY 24-25, 75k for AY 25-26
+        const newStdDed = ay === '2024-2025' ? 50000 : 75000;
         const incomeSalaryNew = Math.max(0, grossSalary - newStdDed);
 
         // House Property in New Regime:
@@ -161,42 +161,66 @@ const TaxCalculator = () => {
         // Rebate 87A: up to 7L income -> 25000 tax rebate (effectively 0 tax)
 
         let newTax = 0;
-        // Slabs for AY 25-26 (Budget 2024 proposed changes)
-        // 0-3: Nil
-        // 3-7: 5%
-        // 7-10: 10%
-        // 10-12: 15%
-        // 12-15: 20%
-        // >15: 30%
 
-        // Note: User prompt said "New Regime slabs". I will use the latest known slabs for AY 25-26.
-        // 0-3L: 0
-        // 3-7L: 5%  -> (4L * 5% = 20000)
-        // 7-10L: 10% -> (3L * 10% = 30000)
-        // 10-12L: 15% -> (2L * 15% = 30000)
-        // 12-15L: 20% -> (3L * 20% = 60000)
-        // >15L: 30%
+        if (ay === '2024-2025') {
+            // Slabs for AY 2024-25 (FY 2023-24)
+            // 0-3L: Nil
+            // 3-6L: 5%
+            // 6-9L: 10%
+            // 9-12L: 15%
+            // 12-15L: 20%
+            // >15L: 30%
 
-        let tempNewTaxable = newTaxable;
+            let temp = newTaxable;
+            if (newTaxable > 1500000) {
+                newTax += (newTaxable - 1500000) * 0.30;
+                temp = 1500000;
+            }
+            if (temp > 1200000) {
+                newTax += (temp - 1200000) * 0.20;
+                temp = 1200000;
+            }
+            if (temp > 900000) {
+                newTax += (temp - 900000) * 0.15;
+                temp = 900000;
+            }
+            if (temp > 600000) {
+                newTax += (temp - 600000) * 0.10;
+                temp = 600000;
+            }
+            if (temp > 300000) {
+                newTax += (temp - 300000) * 0.05;
+            }
+        } else {
+            // Slabs for AY 2025-26 (Budget 2024 proposed changes)
+            // 0-3: Nil
+            // 3-7: 5%
+            // 7-10: 10%
+            // 10-12: 15%
+            // 12-15: 20%
+            // >15: 30%
 
-        if (newTaxable > 1500000) {
-            newTax += (newTaxable - 1500000) * 0.30;
-            tempNewTaxable = 1500000;
-        }
-        if (tempNewTaxable > 1200000) {
-            newTax += (tempNewTaxable - 1200000) * 0.20;
-            tempNewTaxable = 1200000;
-        }
-        if (tempNewTaxable > 1000000) {
-            newTax += (tempNewTaxable - 1000000) * 0.15;
-            tempNewTaxable = 1000000;
-        }
-        if (tempNewTaxable > 700000) {
-            newTax += (tempNewTaxable - 700000) * 0.10;
-            tempNewTaxable = 700000;
-        }
-        if (tempNewTaxable > 300000) {
-            newTax += (tempNewTaxable - 300000) * 0.05;
+            let tempNewTaxable = newTaxable;
+
+            if (newTaxable > 1500000) {
+                newTax += (newTaxable - 1500000) * 0.30;
+                tempNewTaxable = 1500000;
+            }
+            if (tempNewTaxable > 1200000) {
+                newTax += (tempNewTaxable - 1200000) * 0.20;
+                tempNewTaxable = 1200000;
+            }
+            if (tempNewTaxable > 1000000) {
+                newTax += (tempNewTaxable - 1000000) * 0.15;
+                tempNewTaxable = 1000000;
+            }
+            if (tempNewTaxable > 700000) {
+                newTax += (tempNewTaxable - 700000) * 0.10;
+                tempNewTaxable = 700000;
+            }
+            if (tempNewTaxable > 300000) {
+                newTax += (tempNewTaxable - 300000) * 0.05;
+            }
         }
 
         // Rebate u/s 87A for New Regime (Income up to 7L)
@@ -237,7 +261,7 @@ const TaxCalculator = () => {
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Income Tax Calculator</h1>
                     <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
-                        Calculate your income tax liability under both Old and New Regimes for AY 2025-26.
+                        Calculate your income tax liability under both Old and New Regimes for AY 2024-25 & 2025-26.
                         Compare savings and choose the best option for your financial planning.
                     </p>
                 </div>
@@ -281,6 +305,7 @@ const TaxCalculator = () => {
                                                 onChange={(e) => handleInputChange('ay', e.target.value)}
                                                 className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                             >
+                                                <option value="2024-2025">2024-2025</option>
                                                 <option value="2025-2026">2025-2026</option>
                                                 <option value="2026-2027">2026-2027</option>
                                             </select>
