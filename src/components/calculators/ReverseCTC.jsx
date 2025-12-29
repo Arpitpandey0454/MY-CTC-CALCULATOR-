@@ -344,29 +344,29 @@ const ReverseCTC = () => {
                             <div className="max-h-64 sm:max-h-72 flex justify-center mb-4">
                                 <Pie data={chartData} options={{ responsive: true, layout: { padding: 20 }, plugins: { legend: { position: 'bottom', labels: { color: document.documentElement.classList.contains('dark') ? '#d1d5db' : '#374151', font: { size: 10 } } } } }} />
                             </div>
-
-                            {/* Earnings Section Moved Here */}
-                            <div>
-                                <h5 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">Earnings Breakdown (Annual)</h5>
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Basic Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.components.basic)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">HRA</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.components.hra)}</span></div>
-                                    <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Special Allowance</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.components.special)}</span></div>
-                                    <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
-                                        <span>Gross Salary</span> <span>{f_simple(results.grossSalary)}</span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     )}
 
                     {/* Bottom Row: Details Panel (Full Width) */}
                     {results && (
                         <div className="lg:col-span-2 mt-4 p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                                {/* Column 1: Deductions */}
+                                {/* Column 1: Earnings */}
                                 <div>
+                                    <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Earnings (Annual)</h5>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Basic Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.components.basic)}</span></div>
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">HRA</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.components.hra)}</span></div>
+                                        <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Special Allowance</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.components.special)}</span></div>
+                                        <div className="flex justify-between font-semibold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
+                                            <span>Gross Salary</span> <span>{f_simple(results.grossSalary)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Column 2: Deductions */}
+                                <div className="lg:border-l border-gray-200/80 dark:border-gray-700/80 lg:px-6">
                                     <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Deductions (Annual)</h5>
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">EPF (Employee)</span> <span className="text-red-600 dark:text-red-400 font-medium">{neg_f_simple(results.deductions.employeePF)}</span></div>
@@ -378,7 +378,7 @@ const ReverseCTC = () => {
                                     </div>
                                 </div>
 
-                                {/* Column 2: CTC Breakup */}
+                                {/* Column 3: CTC Breakup */}
                                 <div className="lg:border-l border-gray-200/80 dark:border-gray-700/80 lg:px-6">
                                     <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup</h5>
                                     <div className="space-y-2 text-sm bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
