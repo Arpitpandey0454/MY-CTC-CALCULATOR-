@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import { f_simple, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
+import { Download, Share2, FileSpreadsheet } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
+import ShareModal from '../shared/ShareModal';
 
 const Input = ({ label, value, onChange, type = "text", readOnly = false }) => (
     <div className="flex flex-col gap-1">
@@ -27,6 +32,8 @@ const Button = ({ children, onClick }) => (
 
 const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
     const [localActiveTab, setLocalActiveTab] = useState('pf');
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [calculationData, setCalculationData] = useState(null);
 
     // Sync prop with local state if provided
     React.useEffect(() => {
@@ -42,6 +49,7 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
         } else {
             setLocalActiveTab(tab);
         }
+        setCalculationData(null); // Clear data on tab switch
     };
 
     const tabs = [
@@ -53,10 +61,177 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
         { id: 'col', label: 'Cost of Living' },
     ];
 
+    const handleCalculationUpdate = (data) => {
+        setCalculationData({ type: activeTab, ...data });
+    };
+
+    const handleDownloadPDF = async () => {
+        const element = document.getElementById('additional-calculator-container');
+        if (!element) return;
+
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: null
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`${activeTab}-calculator-result.pdf`);
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        }
+    };
+
+    const handleDownloadExcel = () => {
+        if (!calculationData) return;
+        const wb = XLSX.utils.book_new();
+        let data = [];
+        let cols = [];
+
+        switch (calculationData.type) {
+            case 'pf':
+                data = [
+                    ['PF Calculation'],
+                    ['Input Basic Salary', calculationData.inputs.basic],
+                    [],
+                    ['Breakdown', 'Amount'],
+                    ['Employee Share (12%)', calculationData.result.employee],
+                    ['Employer Share Total (12%)', calculationData.result.employer.total],
+                    ['- EPF Portion', calculationData.result.employer.epf],
+                    ['- EPS Portion', calculationData.result.employer.eps],
+                    [],
+                    ['Total Monthly Contribution', calculationData.result.total]
+                ];
+                cols = [{ wch: 30 }, { wch: 15 }];
+                break;
+            case 'hra':
+                data = [
+                    ['HRA Exemption Calculation'],
+                    ['Basic Salary', calculationData.inputs.basic],
+                    ['HRA Received', calculationData.inputs.hraReceived],
+                    ['Rent Paid', calculationData.inputs.rentPaid],
+                    ['Metro City', calculationData.inputs.isMetro ? 'Yes' : 'No'],
+                    [],
+                    ['Result', 'Amount'],
+                    ['Exempted HRA', calculationData.result.exempt],
+                    ['Taxable HRA', calculationData.result.taxable]
+                ];
+                cols = [{ wch: 25 }, { wch: 15 }];
+                break;
+            case 'gratuity':
+                data = [
+                    ['Gratuity Calculation'],
+                    ['Basic Salary', calculationData.inputs.basic],
+                    ['Years of Service', calculationData.inputs.years],
+                    [],
+                    ['Estimated Gratuity', calculationData.result]
+                ];
+                cols = [{ wch: 25 }, { wch: 15 }];
+                break;
+            case 'bonus':
+                data = [
+                    ['Bonus Calculation'],
+                    ['Basic Salary', calculationData.inputs.basic],
+                    ['Bonus Percentage', `${calculationData.inputs.percent}%`],
+                    [],
+                    ['Minimum Bonus (8.33%)', calculationData.result.min],
+                    ['Maximum Bonus (20%)', calculationData.result.max],
+                    ['Calculated Bonus', calculationData.result.custom || 'N/A']
+                ];
+                cols = [{ wch: 25 }, { wch: 15 }];
+                break;
+            case 'lta':
+                data = [
+                    ['LTA Exemption Calculation'],
+                    ['LTA Received', calculationData.inputs.ltaReceived],
+                    ['Travel Cost', calculationData.inputs.travelCost],
+                    [],
+                    ['Exempt Amount', calculationData.result.exempt],
+                    ['Taxable Amount', calculationData.result.taxable]
+                ];
+                cols = [{ wch: 25 }, { wch: 15 }];
+                break;
+            case 'col':
+                data = [
+                    ['Cost of Living Comparison'],
+                    ['Current Salary', calculationData.inputs.currentSalary],
+                    ['Current City', calculationData.inputs.currentCity],
+                    ['Target City', calculationData.inputs.targetCity],
+                    [],
+                    ['Equivalent Salary in Target City', calculationData.result.equivalentSalary],
+                    ['Difference', calculationData.result.difference],
+                    ['Percentage Change', `${calculationData.result.percentage}%`]
+                ];
+                cols = [{ wch: 30 }, { wch: 15 }];
+                break;
+            default:
+                return;
+        }
+
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        ws['!cols'] = cols;
+        XLSX.utils.book_append_sheet(wb, ws, 'Calculation Result');
+        XLSX.writeFile(wb, `${activeTab}-calculation.xlsx`);
+    };
+
     return (
         <div className="max-w-5xl mx-auto">
-            <div className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Additional Calculators</h2>
+            <div id="additional-calculator-container" className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200">Additional Calculators</h2>
+                    {calculationData && (
+                        <div className="flex flex-nowrap gap-2 items-center">
+                            <button
+                                onClick={handleDownloadPDF}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download as PDF"
+                            >
+                                <Download size={18} />
+                                <span>PDF</span>
+                            </button>
+                            <button
+                                onClick={handleDownloadExcel}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download as Excel"
+                            >
+                                <FileSpreadsheet size={18} />
+                                <span>Excel</span>
+                            </button>
+                            <button
+                                onClick={() => setIsShareModalOpen(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Share"
+                            >
+                                <Share2 size={18} />
+                                <span>Share</span>
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 <div className="flex flex-wrap gap-2 mb-8 border-b border-gray-200 dark:border-gray-700 pb-4">
                     {tabs.map(tab => (
@@ -74,19 +249,24 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
                 </div>
 
                 <div className="min-h-[300px]">
-                    {activeTab === 'pf' && <PFCalculator />}
-                    {activeTab === 'hra' && <HRACalculator />}
-                    {activeTab === 'gratuity' && <GratuityCalculator />}
-                    {activeTab === 'bonus' && <BonusCalculator />}
-                    {activeTab === 'lta' && <LTACalculator />}
-                    {activeTab === 'col' && <CostOfLivingCalculator />}
+                    {activeTab === 'pf' && <PFCalculator onCalculate={handleCalculationUpdate} />}
+                    {activeTab === 'hra' && <HRACalculator onCalculate={handleCalculationUpdate} />}
+                    {activeTab === 'gratuity' && <GratuityCalculator onCalculate={handleCalculationUpdate} />}
+                    {activeTab === 'bonus' && <BonusCalculator onCalculate={handleCalculationUpdate} />}
+                    {activeTab === 'lta' && <LTACalculator onCalculate={handleCalculationUpdate} />}
+                    {activeTab === 'col' && <CostOfLivingCalculator onCalculate={handleCalculationUpdate} />}
                 </div>
             </div>
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                shareUrl={window.location.href}
+            />
         </div>
     );
 };
 
-const PFCalculator = () => {
+const PFCalculator = ({ onCalculate }) => {
     const [basic, setBasic] = useState('');
     const [result, setResult] = useState(null);
 
@@ -113,7 +293,7 @@ const PFCalculator = () => {
         const totalEmployer = b * 0.12;
         const epfEmployer = totalEmployer - eps;
 
-        setResult({
+        const res = {
             employee: emp,
             employer: {
                 total: totalEmployer,
@@ -121,7 +301,10 @@ const PFCalculator = () => {
                 eps: eps
             },
             total: emp + totalEmployer
-        });
+        };
+
+        setResult(res);
+        if (onCalculate) onCalculate({ inputs: { basic: b }, result: res });
     };
 
     return (
@@ -167,7 +350,7 @@ const PFCalculator = () => {
     );
 };
 
-const HRACalculator = () => {
+const HRACalculator = ({ onCalculate }) => {
     const [basic, setBasic] = useState('');
     const [hraReceived, setHraReceived] = useState('');
     const [rentPaid, setRentPaid] = useState('');
@@ -188,7 +371,12 @@ const HRACalculator = () => {
         const c2 = isMetro ? b * 0.50 : b * 0.40;
         const c3 = Math.max(0, rent - (b * 0.10));
 
-        setExempt(Math.min(c1, c2, c3));
+        const exemptVal = Math.min(c1, c2, c3);
+        setExempt(exemptVal);
+        if (onCalculate) onCalculate({
+            inputs: { basic: b, hraReceived: hra, rentPaid: rent, isMetro },
+            result: { exempt: exemptVal, taxable: Math.max(0, hra - exemptVal) }
+        });
     };
 
     return (
@@ -233,7 +421,7 @@ const HRACalculator = () => {
     );
 };
 
-const GratuityCalculator = () => {
+const GratuityCalculator = ({ onCalculate }) => {
     const [basic, setBasic] = useState('');
     const [years, setYears] = useState('');
     const [gratuity, setGratuity] = useState(null);
@@ -248,6 +436,7 @@ const GratuityCalculator = () => {
         }
         const val = (15 * b * y) / 26;
         setGratuity(val);
+        if (onCalculate) onCalculate({ inputs: { basic: b, years: y }, result: val });
     };
 
     return (
@@ -273,7 +462,7 @@ const GratuityCalculator = () => {
     );
 };
 
-const BonusCalculator = () => {
+const BonusCalculator = ({ onCalculate }) => {
     const [basic, setBasic] = useState('');
     const [percent, setPercent] = useState('');
     const [bonus, setBonus] = useState(null);
@@ -287,12 +476,14 @@ const BonusCalculator = () => {
             return;
         }
 
-        setBonus({
+        const res = {
             min: b * 0.0833,
             max: b * 0.20,
             custom: p > 0 ? (b * p) / 100 : null,
             customPercent: p
-        });
+        };
+        setBonus(res);
+        if (onCalculate) onCalculate({ inputs: { basic: b, percent: p }, result: res });
     };
 
     return (
@@ -331,7 +522,7 @@ const BonusCalculator = () => {
     );
 };
 
-const LTACalculator = () => {
+const LTACalculator = ({ onCalculate }) => {
     const [ltaReceived, setLtaReceived] = useState('');
     const [travelCost, setTravelCost] = useState('');
     const [result, setResult] = useState(null);
@@ -349,7 +540,9 @@ const LTACalculator = () => {
         const exempt = Math.min(received, cost);
         const taxable = Math.max(0, received - exempt);
 
-        setResult({ exempt, taxable });
+        const res = { exempt, taxable };
+        setResult(res);
+        if (onCalculate) onCalculate({ inputs: { ltaReceived: received, travelCost: cost }, result: res });
     };
 
     return (
@@ -387,7 +580,7 @@ const LTACalculator = () => {
     );
 };
 
-const CostOfLivingCalculator = () => {
+const CostOfLivingCalculator = ({ onCalculate }) => {
     const [currentSalary, setCurrentSalary] = useState('');
     const [currentCity, setCurrentCity] = useState('Bangalore');
     const [targetCity, setTargetCity] = useState('Mumbai');
@@ -420,7 +613,9 @@ const CostOfLivingCalculator = () => {
         const difference = equivalentSalary - salary;
         const percentage = ((difference / salary) * 100).toFixed(1);
 
-        setResult({ equivalentSalary, difference, percentage });
+        const res = { equivalentSalary, difference, percentage };
+        setResult(res);
+        if (onCalculate) onCalculate({ inputs: { currentSalary: salary, currentCity, targetCity }, result: res });
     };
 
     return (
