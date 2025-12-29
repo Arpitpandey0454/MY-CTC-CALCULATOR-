@@ -1,34 +1,12 @@
 import React, { useState } from 'react';
+import Input from '../shared/Input';
+import Button from '../shared/Button';
 import { f_simple, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
 import { Download, Share2, FileSpreadsheet } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import * as XLSX from 'xlsx';
 import ShareModal from '../shared/ShareModal';
-
-const Input = ({ label, value, onChange, type = "text", readOnly = false }) => (
-    <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
-        <div className="relative">
-            <input
-                type={type}
-                value={value}
-                onChange={onChange}
-                readOnly={readOnly}
-                className={`w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all ${readOnly ? 'opacity-70 cursor-not-allowed' : ''}`}
-            />
-        </div>
-    </div>
-);
-
-const Button = ({ children, onClick }) => (
-    <button
-        onClick={onClick}
-        className="w-full py-3 px-4 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-teal-500/20 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
-    >
-        {children}
-    </button>
-);
 
 const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
     const [localActiveTab, setLocalActiveTab] = useState('pf');
@@ -100,7 +78,7 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
                 heightLeft -= pageHeight;
             }
 
-            pdf.save(`${activeTab}-calculator-result.pdf`);
+            pdf.save('additional-calculators.pdf');
         } catch (error) {
             console.error("Error generating PDF:", error);
         }
@@ -158,8 +136,9 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
                     ['Basic Salary', calculationData.inputs.basic],
                     ['Bonus Percentage', `${calculationData.inputs.percent}%`],
                     [],
-                    ['Minimum Bonus (8.33%)', calculationData.result.min],
-                    ['Maximum Bonus (20%)', calculationData.result.max],
+                    ['Breakdown', 'Amount'],
+                    ['Min Bonus (8.33%)', calculationData.result.min],
+                    ['Max Bonus (20%)', calculationData.result.max],
                     ['Calculated Bonus', calculationData.result.custom || 'N/A']
                 ];
                 cols = [{ wch: 25 }, { wch: 15 }];
@@ -170,8 +149,9 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
                     ['LTA Received', calculationData.inputs.ltaReceived],
                     ['Travel Cost', calculationData.inputs.travelCost],
                     [],
-                    ['Exempt Amount', calculationData.result.exempt],
-                    ['Taxable Amount', calculationData.result.taxable]
+                    ['Result', 'Amount'],
+                    ['Exempt LTA', calculationData.result.exempt],
+                    ['Taxable LTA', calculationData.result.taxable]
                 ];
                 cols = [{ wch: 25 }, { wch: 15 }];
                 break;
@@ -182,11 +162,12 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
                     ['Current City', calculationData.inputs.currentCity],
                     ['Target City', calculationData.inputs.targetCity],
                     [],
-                    ['Equivalent Salary in Target City', calculationData.result.equivalentSalary],
+                    ['Result', 'Value'],
+                    ['Equivalent Salary', calculationData.result.equivalentSalary],
                     ['Difference', calculationData.result.difference],
-                    ['Percentage Change', `${calculationData.result.percentage}%`]
+                    ['Percentage Diff', `${calculationData.result.percentage}%`]
                 ];
-                cols = [{ wch: 30 }, { wch: 15 }];
+                cols = [{ wch: 25 }, { wch: 15 }];
                 break;
             default:
                 return;
@@ -199,10 +180,13 @@ const AdditionalCalculators = ({ activeSubTab, onTabChange }) => {
     };
 
     return (
-        <div className="max-w-5xl mx-auto">
-            <div id="additional-calculator-container" className="bg-white/60 dark:bg-gray-900 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800 p-6 sm:p-8">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200">Additional Calculators</h2>
+        <div className="max-w-5xl mx-auto mb-3">
+            <div id="additional-calculator-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Additional Calculators</h1>
+                        <p className="text-gray-600 dark:text-gray-400">Useful tools for specific salary components and planning.</p>
+                    </div>
                     {calculationData && (
                         <div className="flex flex-nowrap gap-2 items-center">
                             <button
