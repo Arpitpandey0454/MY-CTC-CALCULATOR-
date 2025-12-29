@@ -445,7 +445,7 @@ const TaxCalculator = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
