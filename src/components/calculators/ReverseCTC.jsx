@@ -41,8 +41,8 @@ const ReverseCTC = () => {
         { limit: 1000000, rate: 0.20 }, { limit: Infinity, rate: 0.30 }
     ];
     const newTaxSlabs = [
-        { limit: 300000, rate: 0 }, { limit: 600000, rate: 0.05 },
-        { limit: 900000, rate: 0.10 }, { limit: 1200000, rate: 0.15 },
+        { limit: 300000, rate: 0 }, { limit: 700000, rate: 0.05 },
+        { limit: 1000000, rate: 0.10 }, { limit: 1200000, rate: 0.15 },
         { limit: 1500000, rate: 0.20 }, { limit: Infinity, rate: 0.30 }
     ];
 
@@ -83,7 +83,7 @@ const ReverseCTC = () => {
         const grossSalary = basic + hra + special;
         const employeePF = includePF ? basic * 0.12 : 0;
         const profTax = includeProfTax ? 2500 : 0;
-        const standardDeduction = 50000;
+        const standardDeduction = taxRegime === 'new' ? 75000 : 50000;
 
         let taxableIncome = grossSalary;
         let finalTax = 0;
