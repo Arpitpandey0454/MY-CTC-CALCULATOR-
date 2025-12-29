@@ -261,8 +261,19 @@ const HikeCalculator = () => {
 
                             <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
                                 <div className="flex justify-between items-center mb-3">
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Expected Hike</label>
-                                    <span className="text-2xl font-bold text-teal-600 dark:text-teal-400">{hikePercentage || 0}%</span>
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Expected Hike (%)</label>
+                                    <div className="flex items-center">
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max="500"
+                                            value={hikePercentage}
+                                            onChange={(e) => setHikePercentage(e.target.value)}
+                                            className="text-2xl font-bold text-teal-600 dark:text-teal-400 bg-transparent border-b-2 border-dashed border-teal-200 dark:border-teal-800 focus:border-teal-500 outline-none w-24 text-right appearance-none"
+                                            placeholder="0"
+                                        />
+                                        <span className="text-xl font-bold text-teal-600 dark:text-teal-400 ml-1">%</span>
+                                    </div>
                                 </div>
                                 <input
                                     type="range"
