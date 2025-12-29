@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Input from '../shared/Input';
 import Button from '../shared/Button';
-import { ChevronDown, ChevronUp, ArrowRight, TrendingUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowRight, TrendingUp, Download, Share2, FileSpreadsheet } from 'lucide-react';
 import { f_simple, numberToWordsIndian, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
+import ShareModal from '../shared/ShareModal';
 
 const HikeCalculator = () => {
     const defaultInputs = {
@@ -28,6 +32,7 @@ const HikeCalculator = () => {
     const [inputs, setInputs] = useState(defaultInputs);
 
     const [results, setResults] = useState(null);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     // Tax Slabs
     const oldTaxSlabs = [
@@ -229,13 +234,133 @@ const HikeCalculator = () => {
         }
     }, [currentCTC, hikePercentage, taxRegime]);
 
+    const handleDownloadPDF = async () => {
+        const element = document.getElementById('hike-calculator-container');
+        if (!element) return;
+
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: null
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('hike-projection-breakdown.pdf');
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        }
+    };
+
+    const handleDownloadExcel = () => {
+        if (!results) return;
+        const wb = XLSX.utils.book_new();
+
+        // Sheet 1: Projection Summary
+        const summaryData = [
+            ['Salary Hike Projection Summary'],
+            ['Current Annual CTC', results.current.ctc],
+            ['Expected Hike', `${hikePercentage}%`],
+            ['New Annual CTC', results.new.ctc],
+            ['Increment Amount', results.diff.ctc],
+            [],
+            ['Comparison', 'Current', 'New', 'Difference'],
+            ['Monthly In-hand', results.current.netInHandMonthly, results.new.netInHandMonthly, results.diff.inHandMonthly],
+            ['Yearly In-hand', results.current.netInHandYearly, results.new.netInHandYearly, results.diff.inHandYearly]
+        ];
+        const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+        wsSummary['!cols'] = [{ wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
+        XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+        // Sheet 2: Revised Salary Breakdown matches logic from inputs
+        // Since we don't have the full component detail in `results.new` directly exposed as a simple obj, 
+        // we can assume the user wants the input configuration and the final calculated net.
+        // For a detailed breakdown, we would ideally pass the full component list.
+        // For now, let's export the Input Structure used for calculation.
+
+        const detailsData = [
+            ['Revised Salary Structure Configuration'],
+            ['Components Mode', inputMode],
+            [],
+            ['Component', 'Value (Percentage/Amount)'],
+            ['Basic', inputs.basic],
+            ['HRA', inputs.hra],
+            ['DA', inputs.da],
+            ['Employee PF', inputs.empPF],
+            ['Employer PF', inputs.emplrPF],
+            ['Gratuity', inputs.gratuity],
+            ['Insurance', inputs.insurance],
+            ['NPS', inputs.nps],
+            ['Other Allowance', inputs.other],
+            ['Professional Tax', inputs.profTax]
+        ];
+        const wsDetails = XLSX.utils.aoa_to_sheet(detailsData);
+        wsDetails['!cols'] = [{ wch: 25 }, { wch: 20 }];
+        XLSX.utils.book_append_sheet(wb, wsDetails, 'Structure');
+
+        XLSX.writeFile(wb, 'hike-projection.xlsx');
+    };
+
 
     return (
-        <div className="max-w-7xl mx-auto">
-            <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
-                <div className="text-left mb-10">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-3">Hike Calculator</h2>
-                    <p className="text-gray-600 dark:text-gray-400">Visualize your salary growth with our advanced projection tool.</p>
+        <div className="max-w-7xl mx-auto mb-3">
+            <div id="hike-calculator-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+                <div className="text-left mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-3">Hike Calculator</h2>
+                        <p className="text-gray-600 dark:text-gray-400">Visualize your salary growth with our advanced projection tool.</p>
+                    </div>
+                    {results && (
+                        <div className="flex flex-nowrap gap-2 items-center">
+                            <button
+                                onClick={handleDownloadPDF}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download projection as PDF"
+                            >
+                                <Download size={18} />
+                                <span>PDF</span>
+                            </button>
+                            <button
+                                onClick={handleDownloadExcel}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download projection as Excel"
+                            >
+                                <FileSpreadsheet size={18} />
+                                <span>Excel</span>
+                            </button>
+                            <button
+                                onClick={() => setIsShareModalOpen(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Share this projection"
+                            >
+                                <Share2 size={18} />
+                                <span>Share</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
@@ -406,6 +531,11 @@ const HikeCalculator = () => {
                     </div>
                 </div>
             </div>
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                shareUrl={window.location.href}
+            />
         </div>
     );
 };
