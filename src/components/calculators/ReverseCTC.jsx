@@ -279,7 +279,7 @@ const ReverseCTC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                     {/* Left: Input Panel */}
-                    <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100 h-full">
+                    <div className="p-6 rounded-2xl bg-white dark:bg-sky-950/10 border border-gray-200 dark:border-sky-100 h-full">
                         <h4 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Calculate CTC from In-hand</h4>
                         <div>
                             <label className="block text-gray-700 dark:text-gray-300 font-medium mb-4">Desired Net Monthly In-hand</label>
@@ -334,9 +334,9 @@ const ReverseCTC = () => {
 
                     {/* Right: Summary Panel (Results + Earnings) */}
                     {results && (
-                        <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-700 h-full">
+                        <div className="p-6 rounded-2xl bg-white dark:bg-sky-950/30 border border-gray-200 dark:border-sky-700 h-full">
                             <h4 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Required CTC Breakdown</h4>
-                            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg text-center mb-4">
+                            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg text-center mb-4">
                                 <p className="text-center text-gray-600 dark:text-gray-400 text-sm">Required Annual CTC</p>
                                 <h3 className="text-3xl font-bold text-center text-blue-600 dark:text-blue-400">{formatIndianCurrency(results.ctc)}</h3>
                                 <p className="text-center text-gray-500 dark:text-gray-500 text-sm mt-2">Gives Net Monthly: <span className="font-medium text-gray-600 dark:text-gray-400">{f_simple(results.netInHandMonthly)}</span></p>
@@ -349,7 +349,7 @@ const ReverseCTC = () => {
 
                     {/* Bottom Row: Details Panel (Full Width) */}
                     {results && (
-                        <div className="lg:col-span-2 mt-4 p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
+                        <div className="lg:col-span-2 mt-4 p-6 rounded-2xl bg-white dark:bg-sky-950/10 border border-gray-200 dark:border-sky-100">
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                                 {/* Column 1: Earnings */}

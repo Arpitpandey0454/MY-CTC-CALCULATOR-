@@ -414,7 +414,7 @@ const CompareOffers = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     {/* Offer 1 */}
-                    <div className="border-2 border-teal-200 dark:border-teal-700 rounded-2xl p-6 bg-teal-50 dark:bg-teal-950/30">
+                    <div className="border-2 border-gray-200 dark:border-teal-700 rounded-2xl p-6 bg-white dark:bg-teal-950/30">
                         <h3 className="text-xl font-bold text-teal-900 dark:text-teal-100 mb-4">Offer 1</h3>
                         <div className="space-y-4">
                             <div>
@@ -447,7 +447,7 @@ const CompareOffers = () => {
                     </div>
 
                     {/* Offer 2 */}
-                    <div className="border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-6 bg-blue-50 dark:bg-blue-950/30">
+                    <div className="border-2 border-gray-200 dark:border-blue-700 rounded-2xl p-6 bg-white dark:bg-blue-950/30">
                         <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-4">Offer 2</h3>
                         <div className="space-y-4">
                             <div>

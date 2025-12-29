@@ -368,7 +368,7 @@ const HikeCalculator = () => {
                     <div>
                         {/* Primary Input Section */}
                         <div className="space-y-6 mb-8">
-                            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Current Annual CTC</label>
                                 <Input
                                     type="text"
@@ -384,7 +384,7 @@ const HikeCalculator = () => {
                                 <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{currentCTC ? numberToWordsIndian(currentCTC) : 'Enter your current CTC'}</p>
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
                                 <div className="flex justify-between items-center mb-3">
                                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Expected Hike (%)</label>
                                     <div className="flex items-center">
@@ -422,7 +422,7 @@ const HikeCalculator = () => {
                         <div className="mb-10">
                             <button
                                 onClick={() => setShowAdvanced(!showAdvanced)}
-                                className="flex items-center w-full justify-center text-sm font-medium text-gray-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 transition-colors bg-white dark:bg-gray-800 px-4 py-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
+                                className="flex items-center w-full justify-center text-sm font-medium text-gray-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 transition-colors bg-white dark:bg-gray-800 px-4 py-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
                             >
                                 {showAdvanced ? 'Hide Advanced Options' : 'Configure Current Salary Structure'}
                                 {showAdvanced ? <ChevronUp size={16} className="ml-2" /> : <ChevronDown size={16} className="ml-2" />}

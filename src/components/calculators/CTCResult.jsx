@@ -57,10 +57,10 @@ export const CTCResultSummary = ({ results }) => {
     };
 
     return (
-        <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-700 h-full">
+        <div className="p-6 rounded-2xl bg-white dark:bg-sky-950/30 border border-gray-200 dark:border-sky-700 h-full">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Salary Breakdown under {taxRegime === 'old' ? 'Old' : 'New'} Tax Regime</h2>
 
-            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
                 <div className="grid grid-cols-2 gap-y-6 gap-x-4">
                     <div className="text-center">
                         <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">Net Monthly</p>
@@ -117,7 +117,7 @@ export const CTCResultDetails = ({ results, onShowTaxDetails }) => {
     const calculatedGrossTaxableIncome = ctc - totalDeductionsValue;
 
     return (
-        <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
+        <div className="p-6 rounded-2xl bg-white dark:bg-sky-950/10 border border-gray-200 dark:border-sky-100">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Column 1: Salary Breakdown */}
                 <div>

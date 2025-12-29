@@ -54,7 +54,7 @@ const CTCInput = ({
     const inputClass = "w-22 text-right";
 
     return (
-        <div className="p-6 rounded-2xl bg-sky-50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-100">
+        <div className="p-6 rounded-2xl bg-white dark:bg-sky-950/10 border border-gray-200 dark:border-sky-100">
             <div>
                 <label className="block text-gray-700 dark:text-gray-300 font-medium mb-4">Enter your Annual CTC</label>
                 <div className="flex flex-col">
