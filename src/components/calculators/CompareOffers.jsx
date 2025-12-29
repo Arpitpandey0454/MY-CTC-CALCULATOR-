@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import Input from '../shared/Input';
 import Button from '../shared/Button';
-import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, HelpCircle, Download, Share2, FileSpreadsheet } from 'lucide-react';
 import { f_simple, numberToWordsIndian, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
 import Tooltip from '../shared/Tooltip';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
+import ShareModal from '../shared/ShareModal';
 
 const CompareOffers = () => {
     const defaultInputs = {
@@ -30,6 +34,7 @@ const CompareOffers = () => {
     const [offer1, setOffer1] = useState(createInitialState());
     const [offer2, setOffer2] = useState(createInitialState());
     const [results, setResults] = useState(null);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     // Rate limits
     const oldTaxSlabs = [
@@ -181,7 +186,15 @@ const CompareOffers = () => {
         const netInHandYearly = grossSalary - totalDeductions;
         const netInHandMonthly = netInHandYearly / 12;
 
-        return { grossSalary, totalDeductions, netInHandYearly, netInHandMonthly };
+        return {
+            grossSalary,
+            totalDeductions,
+            netInHandYearly,
+            netInHandMonthly,
+            components: {
+                basic, hra, empPF, emplrPF, gratuity, insurance, nps, other, da, special, profTax, taxableIncome, finalTax
+            }
+        };
     };
 
     const handleCompare = () => {
@@ -197,6 +210,114 @@ const CompareOffers = () => {
                 monthly: res2.netInHandMonthly - res1.netInHandMonthly
             }
         });
+    };
+
+    const handleDownloadPDF = async () => {
+        const element = document.getElementById('compare-offers-container');
+        if (!element) return;
+
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: null
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('compare-offers-breakdown.pdf');
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        }
+    };
+
+    const handleDownloadExcel = () => {
+        if (!results) return;
+
+        const wb = XLSX.utils.book_new();
+
+        const createColumn = (offerRes, title) => [
+            title,
+            '',
+            'Summary',
+            offerRes.grossSalary,
+            offerRes.totalDeductions,
+            offerRes.netInHandYearly,
+            offerRes.netInHandMonthly,
+            '',
+            'Earnings',
+            offerRes.components.basic,
+            offerRes.components.hra,
+            offerRes.components.da,
+            offerRes.components.special,
+            offerRes.components.other,
+            '',
+            'Deductions',
+            offerRes.components.empPF,
+            offerRes.components.profTax,
+            offerRes.components.finalTax
+        ];
+
+        const labels = [
+            'Category',
+            '',
+            'Metric',
+            'Gross Salary',
+            'Total Deductions',
+            'Net In-Hand (Yearly)',
+            'Net In-Hand (Monthly)',
+            '',
+            'Component',
+            'Basic',
+            'HRA',
+            'DA',
+            'Special Allowance',
+            'Other',
+            '',
+            'Deduction',
+            'PF (Employee)',
+            'Professional Tax',
+            'Income Tax'
+        ];
+
+        const offer1Data = createColumn(results.offer1, 'Offer 1');
+        const offer2Data = createColumn(results.offer2, 'Offer 2');
+
+        const wsData = labels.map((label, index) => [
+            label,
+            offer1Data[index],
+            offer2Data[index]
+        ]);
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+        // Add column widths
+        ws['!cols'] = [{ wch: 25 }, { wch: 20 }, { wch: 20 }];
+
+        XLSX.utils.book_append_sheet(wb, ws, 'Compare Offers');
+        XLSX.writeFile(wb, 'compare-offers-breakdown.xlsx');
     };
 
     const renderAdvancedOptions = (offer, setOffer, label) => (
@@ -254,10 +375,42 @@ const CompareOffers = () => {
     );
 
     return (
-        <div className="max-w-5xl mx-auto">
-            <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Compare CTC Offers</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8">Compare two salary offers side by side with detailed component analysis.</p>
+        <div className="max-w-5xl mx-auto mb-3">
+            <div id="compare-offers-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+                    <div>
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Compare CTC Offers</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-8">Compare two salary offers side by side with detailed component analysis.</p>
+                    </div>
+                    {results && (
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={handleDownloadPDF}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download breakdown as PDF"
+                            >
+                                <Download size={18} />
+                                <span>PDF</span>
+                            </button>
+                            <button
+                                onClick={handleDownloadExcel}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Download breakdown as Excel"
+                            >
+                                <FileSpreadsheet size={18} />
+                                <span>Excel</span>
+                            </button>
+                            <button
+                                onClick={() => setIsShareModalOpen(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                                title="Share this calculation"
+                            >
+                                <Share2 size={18} />
+                                <span>Share</span>
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     {/* Offer 1 */}
@@ -381,6 +534,11 @@ const CompareOffers = () => {
                     </div>
                 )}
             </div>
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                shareUrl={window.location.href}
+            />
         </div>
     );
 };

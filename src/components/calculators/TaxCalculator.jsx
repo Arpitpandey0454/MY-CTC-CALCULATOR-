@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Input from '../shared/Input';
 import { f_simple, formatIndianNumber, parseIndianNumber } from '../../utils/formatters';
+import { Download, Share2, FileSpreadsheet } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as XLSX from 'xlsx';
+import ShareModal from '../shared/ShareModal';
 
 const TaxCalculator = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -39,6 +44,7 @@ const TaxCalculator = () => {
         diff: 0,
         better: ''
     });
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     const tabs = [
         { id: 0, label: 'Basic Details' },
@@ -239,6 +245,103 @@ const TaxCalculator = () => {
         });
     };
 
+    const handleDownloadPDF = async () => {
+        const element = document.getElementById('tax-calculator-container');
+        if (!element) return;
+
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: null
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('income-tax-calculation.pdf');
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+        }
+    };
+
+    const handleDownloadExcel = () => {
+        const wb = XLSX.utils.book_new();
+
+        // Sheet 1: Tax Summary
+        const summaryData = [
+            ['Income Tax Calculation Summary'],
+            ['Assessment Year', formData.ay],
+            ['Age Category', formData.age],
+            [],
+            ['Particulars', 'Old Regime', 'New Regime'],
+            ['Taxable Income', results.old.taxable, results.new.taxable],
+            ['Income Tax', results.old.tax, results.new.tax],
+            ['Cess (4%)', results.old.cess, results.new.cess],
+            ['Net Tax Payable', results.old.final, results.new.final],
+            [],
+            ['Recommendation', `Choose ${results.better}`],
+            ['Potential Savings', results.diff]
+        ];
+        const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+        wsSummary['!cols'] = [{ wch: 25 }, { wch: 15 }, { wch: 15 }];
+        XLSX.utils.book_append_sheet(wb, wsSummary, 'Tax Summary');
+
+        // Sheet 2: Detailed Breakdown
+        const detailsData = [
+            ['Detailed Breakdown'],
+            [],
+            ['Income Details', 'Amount'],
+            ['Gross Salary', formData.grossSalary],
+            ['Other Sources', formData.otherIncome],
+            ['Interest Income', formData.interestIncome],
+            ['Rental Income', formData.rentalIncome],
+            ['Home Loan Interest (Self)', formData.hlInterestSelf],
+            ['Home Loan Interest (Let-out)', formData.hlInterestLetOut],
+            [],
+            ['Deductions', 'Amount'],
+            ['80C', formData.section80C],
+            ['80CCD(1B)', formData.nps80CCD],
+            ['80D (Medical)', formData.medical80D],
+            ['80G (Donation)', formData.donation80G],
+            ['80E (Edu Loan)', formData.eduLoan80E],
+            ['80TTA/TTB', formData.savings80TTA],
+            [],
+            ['HRA Details', 'Amount'],
+            ['Basic Salary', formData.basicSalary],
+            ['DA', formData.da],
+            ['HRA Received', formData.hraReceived],
+            ['Rent Paid', formData.rentPaid],
+            ['Metro City', formData.isMetro ? 'Yes' : 'No']
+        ];
+        const wsDetails = XLSX.utils.aoa_to_sheet(detailsData);
+        wsDetails['!cols'] = [{ wch: 30 }, { wch: 15 }];
+        XLSX.utils.book_append_sheet(wb, wsDetails, 'Input Details');
+
+        XLSX.writeFile(wb, 'income-tax-calculation.xlsx');
+    };
+
     const renderInput = (label, field, placeholder = "0") => (
         <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
@@ -253,17 +356,44 @@ const TaxCalculator = () => {
     );
 
     return (
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto mb-3">
             {/* Main Container Card */}
-            <div className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+            <div id="tax-calculator-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
 
                 {/* Header Section */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Income Tax Calculator</h1>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
-                        Calculate your income tax liability under both Old and New Regimes for AY 2024-25 & 2025-26.
-                        Compare savings and choose the best option for your financial planning.
-                    </p>
+                <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Income Tax Calculator</h1>
+                        <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
+                            Calculate your income tax liability under both Old and New Regimes for AY 2024-25 & 2025-26.
+                        </p>
+                    </div>
+                    <div className="flex flex-nowrap gap-2 items-center">
+                        <button
+                            onClick={handleDownloadPDF}
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                            title="Download breakdown as PDF"
+                        >
+                            <Download size={18} />
+                            <span>PDF</span>
+                        </button>
+                        <button
+                            onClick={handleDownloadExcel}
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                            title="Download breakdown as Excel"
+                        >
+                            <FileSpreadsheet size={18} />
+                            <span>Excel</span>
+                        </button>
+                        <button
+                            onClick={() => setIsShareModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg transition-colors text-sm font-medium"
+                            title="Share this calculation"
+                        >
+                            <Share2 size={18} />
+                            <span>Share</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8">
@@ -470,7 +600,12 @@ const TaxCalculator = () => {
                     </div>
                 </div>
             </div>
-        </div >
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                shareUrl={window.location.href}
+            />
+        </div>
     );
 };
 
