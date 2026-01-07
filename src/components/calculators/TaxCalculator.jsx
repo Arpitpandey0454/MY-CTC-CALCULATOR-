@@ -197,7 +197,10 @@ const TaxCalculator = () => {
             if (temp > 300000) {
                 newTax += (temp - 300000) * 0.05;
             }
-        } else {
+            // Rebate u/s 87A for New Regime (Income up to 7L)
+            if (newTaxable <= 700000) newTax = 0;
+
+        } else if (ay === '2025-2026') {
             // Slabs for AY 2025-26 (Budget 2024 proposed changes)
             // 0-3: Nil
             // 3-7: 5%
@@ -227,10 +230,48 @@ const TaxCalculator = () => {
             if (tempNewTaxable > 300000) {
                 newTax += (tempNewTaxable - 300000) * 0.05;
             }
-        }
+            // Rebate u/s 87A for New Regime (Income up to 7L)
+            if (newTaxable <= 700000) newTax = 0;
 
-        // Rebate u/s 87A for New Regime (Income up to 7L)
-        if (newTaxable <= 700000) newTax = 0;
+        } else if (ay === '2026-2027') {
+            // Slabs for AY 2026-27 (FY 2025-26)
+            // 0-4L: Nil
+            // 4-8L: 5%
+            // 8-12L: 10%
+            // 12-16L: 15%
+            // 16-20L: 20%
+            // 20-24L: 25%
+            // >24L: 30%
+
+            let tempNewTaxable = newTaxable;
+
+            if (newTaxable > 2400000) {
+                newTax += (newTaxable - 2400000) * 0.30;
+                tempNewTaxable = 2400000;
+            }
+            if (tempNewTaxable > 2000000) {
+                newTax += (tempNewTaxable - 2000000) * 0.25;
+                tempNewTaxable = 2000000;
+            }
+            if (tempNewTaxable > 1600000) {
+                newTax += (tempNewTaxable - 1600000) * 0.20;
+                tempNewTaxable = 1600000;
+            }
+            if (tempNewTaxable > 1200000) {
+                newTax += (tempNewTaxable - 1200000) * 0.15;
+                tempNewTaxable = 1200000;
+            }
+            if (tempNewTaxable > 800000) {
+                newTax += (tempNewTaxable - 800000) * 0.10;
+                tempNewTaxable = 800000;
+            }
+            if (tempNewTaxable > 400000) {
+                newTax += (tempNewTaxable - 400000) * 0.05;
+            }
+
+            // Rebate u/s 87A for AY 2026-27 (Income up to 12L)
+            if (newTaxable <= 1200000) newTax = 0;
+        }
 
         // Marginal Relief logic is complex, skipping for simplicity unless requested, but 87A handles the main <7L case.
 
