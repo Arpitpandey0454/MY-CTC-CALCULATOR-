@@ -433,8 +433,8 @@ const HikeCalculator = () => {
                                     <div className="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
                                         <h3 className="font-semibold text-gray-800 dark:text-gray-200">Current Salary Structure</h3>
                                         <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
-                                            <button onClick={() => handleModeToggle('percentage')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'percentage' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>% Percent</button>
-                                            <button onClick={() => handleModeToggle('amount')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'amount' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>₹ Amount</button>
+                                            <button onClick={() => handleModeToggle('percentage')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'percentage' ? 'bg-teal-600 dark:bg-teal-600 shadow text-white dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>% Percent</button>
+                                            <button onClick={() => handleModeToggle('amount')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${inputMode === 'amount' ? 'bg-teal-600 dark:bg-teal-600 shadow text-white dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>₹ Amount</button>
                                         </div>
                                     </div>
 
