@@ -275,7 +275,7 @@ const CTCInput = ({
                             onClick={() => setShowMore(!showMore)}
                             className="flex items-center text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors"
                         >
-                            {showMore ? 'Show Less' : 'Show More'}
+                            {showMore ? ' Advanced options' : 'Advanced options'}
                             {showMore ? <ChevronUp size={16} className="ml-1" /> : <ChevronDown size={16} className="ml-1" />}
                         </button>
                     </div>
