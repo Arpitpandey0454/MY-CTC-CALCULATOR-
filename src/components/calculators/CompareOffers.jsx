@@ -327,7 +327,7 @@ const CompareOffers = () => {
                 className="flex items-center text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 mb-3"
             >
                 {offer.showAdvanced ? <ChevronUp size={16} className="mr-1" /> : <ChevronDown size={16} className="mr-1" />}
-                Advanced Options (Salary Components)
+                Advanced Options
             </button>
 
             {offer.showAdvanced && (

@@ -424,7 +424,7 @@ const HikeCalculator = () => {
                                 onClick={() => setShowAdvanced(!showAdvanced)}
                                 className="flex items-center w-full justify-center text-sm font-medium text-gray-500 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400 transition-colors bg-white dark:bg-gray-800 px-4 py-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
                             >
-                                {showAdvanced ? 'Hide Advanced Options' : 'Configure Current Salary Structure'}
+                                {showAdvanced ? 'Advanced Options' : 'Advanced Options'}
                                 {showAdvanced ? <ChevronUp size={16} className="ml-2" /> : <ChevronDown size={16} className="ml-2" />}
                             </button>
 
