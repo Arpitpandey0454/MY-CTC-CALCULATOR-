@@ -56,6 +56,16 @@ const CTCInput = ({
                 }
             }
 
+            // Specific validation for Gratuity: Max 4.81% of Basic
+            if (key === 'gratuity') {
+                const basicAmount = parseIndianNumber(inputs.basic);
+                const maxGratuity = basicAmount * 0.0481;
+                if (numericValue > maxGratuity) {
+                    updateInput(key, maxGratuity);
+                    return;
+                }
+            }
+
             updateInput(key, numericValue);
         } else {
             // Block input if greater than 100 in percentage mode general case
@@ -73,6 +83,14 @@ const CTCInput = ({
             if (key === 'other') {
                 if (parseFloat(value) > 20) {
                     updateInput(key, 20);
+                    return;
+                }
+            }
+
+            // Specific validation for Gratuity: Max 4.81%
+            if (key === 'gratuity') {
+                if (parseFloat(value) > 4.81) {
+                    updateInput(key, 4.81);
                     return;
                 }
             }
@@ -287,8 +305,9 @@ const CTCInput = ({
                                 type={inputMode === 'amount' ? 'text' : 'number'}
                                 value={getInputValue('gratuity')}
                                 onChange={(e) => handleInputChange('gratuity', e.target.value)}
-                                className={inputClass}
+                                className={`${inputClass} ${!includeGratuity ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-800' : ''}`}
                                 min="0"
+                                disabled={!includeGratuity}
                             />
 
                             <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
