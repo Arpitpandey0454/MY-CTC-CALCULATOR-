@@ -32,10 +32,29 @@ const CTCInput = ({
         }
 
         if (inputMode === 'amount') {
-            updateInput(key, parseIndianNumber(value));
+            let numericValue = parseIndianNumber(value);
+
+            // Specific validation for NPS: Max 14% of CTC
+            if (key === 'nps') {
+                const maxNPSAmount = ctc * 0.14;
+                if (numericValue > maxNPSAmount) {
+                    updateInput(key, maxNPSAmount);
+                    return;
+                }
+            }
+            updateInput(key, numericValue);
         } else {
-            // Block input if greater than 100 in percentage mode
+            // Block input if greater than 100 in percentage mode general case
             if (parseFloat(value) > 100) return;
+
+            // Specific validaton for NPS: Max 14%
+            if (key === 'nps') {
+                if (parseFloat(value) > 14) {
+                    updateInput(key, 14);
+                    return;
+                }
+            }
+
             updateInput(key, value);
         }
     };
