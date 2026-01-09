@@ -335,13 +335,13 @@ const CompareOffers = () => {
                     <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1 mb-3">
                         <button
                             onClick={() => handleModeToggle(setOffer, offer, 'percentage')}
-                            className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${offer.mode === 'percentage' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
+                            className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${offer.mode === 'percentage' ? 'bg-teal-600 dark:bg-teal-600 shadow text-white dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
                         >
                             Percentage
                         </button>
                         <button
                             onClick={() => handleModeToggle(setOffer, offer, 'amount')}
-                            className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${offer.mode === 'amount' ? 'bg-white dark:bg-gray-600 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
+                            className={`flex-1 py-1 text-xs font-medium rounded-md transition-all ${offer.mode === 'amount' ? 'bg-teal-600 dark:bg-teal-600 shadow text-white dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
                         >
                             Amount
                         </button>
