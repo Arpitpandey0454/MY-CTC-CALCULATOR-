@@ -42,6 +42,16 @@ const CTCInput = ({
                     return;
                 }
             }
+
+            // Specific validation for Other Deductions: Max 20% of CTC
+            if (key === 'other') {
+                const maxOtherAmount = ctc * 0.20;
+                if (numericValue > maxOtherAmount) {
+                    updateInput(key, maxOtherAmount);
+                    return;
+                }
+            }
+
             updateInput(key, numericValue);
         } else {
             // Block input if greater than 100 in percentage mode general case
@@ -51,6 +61,14 @@ const CTCInput = ({
             if (key === 'nps') {
                 if (parseFloat(value) > 14) {
                     updateInput(key, 14);
+                    return;
+                }
+            }
+
+            // Specific validation for Other Deductions: Max 20%
+            if (key === 'other') {
+                if (parseFloat(value) > 20) {
+                    updateInput(key, 20);
                     return;
                 }
             }

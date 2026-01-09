@@ -183,6 +183,7 @@ export const useSalaryCalculation = () => {
             }
             if (key === 'gratuity' && val > 4.81) val = 4.81; // Max 4.81% for Gratuity
             if (key === 'nps' && val > 14) val = 14; // Max 14% for NPS
+            if (key === 'other' && val > 20) val = 20; // Max 20% for Other Deductions
         }
 
         // Special handling for Employee PF to update Employer PF
