@@ -381,7 +381,7 @@ const ReverseCTC = () => {
                                 {/* Column 3: CTC Breakup */}
                                 <div className="lg:border-l border-gray-200/80 dark:border-gray-700/80 lg:px-6">
                                     <h5 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">Cost to Company Breakup</h5>
-                                    <div className="space-y-2 text-sm bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
+                                    <div className="space-y-2 text-sm bg-white dark:bg-gray-800 p-3 rounded-lg">
                                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Gross Salary</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.grossSalary)}</span></div>
                                         <div className="flex justify-between"><span className="text-gray-600 dark:text-gray-400">Employer EPF</span> <span className="font-medium text-gray-900 dark:text-gray-100">{f_simple(results.employerPF)}</span></div>
                                         <div className="flex justify-between font-bold border-t border-gray-300 dark:border-gray-700 pt-2 mt-2 text-gray-900 dark:text-gray-100">
