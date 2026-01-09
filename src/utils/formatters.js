@@ -32,7 +32,7 @@ export const neg_f_simple = (val) => `-₹${Math.round(val).toLocaleString('en-I
 
 export const numberToWordsIndian = (num) => {
     num = Number(num) || 0;
-    if (num === 0) return 'Zero rupees';
+    if (num === 0) return 'Zero';
 
     const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
     const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
@@ -66,5 +66,5 @@ export const numberToWordsIndian = (num) => {
     if (hund) parts.push(threeDigits(hund));
 
     const words = parts.join(' ').replace(/\s+/g, ' ').trim();
-    return words.charAt(0).toUpperCase() + words.slice(1) + ' rupees';
+    return words.charAt(0).toUpperCase() + words.slice(1);
 };

@@ -128,7 +128,7 @@ const CTCInput = ({
                                     onChange={handleCtcChange}
                                 />
                             </div>
-                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(ctc)}</p>
+                            <p className="mt-2 text-sm text-green-700 dark:text-green-400">{numberToWordsIndian(ctc)}</p>
                         </div>
                     </div>
                     {parseFloat(ctc) <= 0 && (
