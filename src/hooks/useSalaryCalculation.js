@@ -266,8 +266,8 @@ export const useSalaryCalculation = () => {
             nps = Math.min(npsRaw, npsLimit);
         }
 
-        // Special Allowance = CTC - (Basic + HRA + Employer PF + Gratuity + Insurance + NPS + Other Deductions + DA)
-        const employerComponents = basic + hra + emplrPF + gratuity + insurance + nps + other + da;
+        // Special Allowance = CTC - (Basic + HRA + Employer PF + Gratuity + Insurance + NPS + Other Deductions + DA + Employee PF)
+        const employerComponents = basic + hra + emplrPF + gratuity + insurance + nps + other + da + empPF;
         const special = Math.max(0, ctcValue - employerComponents);
 
         const grossSalary = basic + hra + da + special;
