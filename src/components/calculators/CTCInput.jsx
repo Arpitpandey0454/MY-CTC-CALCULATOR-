@@ -133,7 +133,7 @@ const CTCInput = ({
                                     onFocus={(e) => e.target.select()}
                                 />
                             </div>
-                            <p className="mt-2 text-sm text-green-700 dark:text-green-400">{numberToWordsIndian(ctc)}</p>
+                            <p className="mt-2 text-sm text-teal-700 dark:text-teal-400">{numberToWordsIndian(ctc)}</p>
                         </div>
                     </div>
                     {parseFloat(ctc) < 10000 && parseFloat(ctc) > 0 && (
