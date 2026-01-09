@@ -207,6 +207,12 @@ export const useSalaryCalculation = () => {
             return;
         }
 
+        // Min 10k, Max 10Cr
+        if (ctcValue < 10000 || ctcValue > 100000000) {
+            setResults(null);
+            return;
+        }
+
         // Percentage Validation
         if (inputMode === 'percentage') {
             const basicP = parseFloat(inputs.basic) || 0;

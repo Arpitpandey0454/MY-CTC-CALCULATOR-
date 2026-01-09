@@ -21,7 +21,7 @@ const CTCInput = ({
         let val = e.target.value;
         // Remove commas for parsing
         const rawVal = parseIndianNumber(val);
-        if (rawVal > 100000000) rawVal = 100000000;
+        // if (rawVal > 100000000) rawVal = 100000000; // Removed clamp to allow showing error message
         setCtc(rawVal);
     };
 
@@ -68,12 +68,16 @@ const CTCInput = ({
 
             updateInput(key, numericValue);
         } else {
+            // Percentage Mode
+            // Remove non-numeric characters except dot AND strip leading zeros
+            const cleanVal = value.replace(/[^0-9.]/g, '').replace(/^0+(?=\d)/, '');
+
             // Block input if greater than 100 in percentage mode general case
-            if (parseFloat(value) > 100) return;
+            if (parseFloat(cleanVal) > 100) return;
 
             // Specific validaton for NPS: Max 14%
             if (key === 'nps') {
-                if (parseFloat(value) > 14) {
+                if (parseFloat(cleanVal) > 14) {
                     updateInput(key, 14);
                     return;
                 }
@@ -81,7 +85,7 @@ const CTCInput = ({
 
             // Specific validation for Other Deductions: Max 20%
             if (key === 'other') {
-                if (parseFloat(value) > 20) {
+                if (parseFloat(cleanVal) > 20) {
                     updateInput(key, 20);
                     return;
                 }
@@ -89,13 +93,13 @@ const CTCInput = ({
 
             // Specific validation for Gratuity: Max 4.81%
             if (key === 'gratuity') {
-                if (parseFloat(value) > 4.81) {
+                if (parseFloat(cleanVal) > 4.81) {
                     updateInput(key, 4.81);
                     return;
                 }
             }
 
-            updateInput(key, value);
+            updateInput(key, cleanVal);
         }
     };
 
@@ -126,11 +130,22 @@ const CTCInput = ({
                                     className="w-full bg-transparent text-gray-700 dark:text-gray-200 font-medium text-right focus:outline-none"
                                     value={formatIndianNumber(ctc)}
                                     onChange={handleCtcChange}
+                                    onFocus={(e) => e.target.select()}
                                 />
                             </div>
                             <p className="mt-2 text-sm text-green-700 dark:text-green-400">{numberToWordsIndian(ctc)}</p>
                         </div>
                     </div>
+                    {parseFloat(ctc) < 10000 && parseFloat(ctc) > 0 && (
+                        <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-semibold">
+                            Minimum CTC should be ₹10,000.
+                        </div>
+                    )}
+                    {parseFloat(ctc) > 100000000 && (
+                        <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-semibold">
+                            Maximum CTC can be ₹10 Cr.
+                        </div>
+                    )}
                     {parseFloat(ctc) <= 0 && (
                         <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-semibold">
                             Invalid input, provide number more than zero.
@@ -185,9 +200,10 @@ const CTCInput = ({
                         </Tooltip>
                     </label>
                     <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
+                        type="text"
                         value={getInputValue('basic')}
                         onChange={(e) => handleInputChange('basic', e.target.value)}
+                        onFocus={(e) => e.target.select()}
                         className={inputClass}
                         min="0"
                     />
@@ -199,9 +215,10 @@ const CTCInput = ({
                         </Tooltip>
                     </label>
                     <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
+                        type="text"
                         value={getInputValue('hra')}
                         onChange={(e) => handleInputChange('hra', e.target.value)}
+                        onFocus={(e) => e.target.select()}
                         className={inputClass}
                         min="0"
                     />
@@ -213,9 +230,10 @@ const CTCInput = ({
                         </Tooltip>
                     </label>
                     <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
+                        type="text"
                         value={getInputValue('da')}
                         onChange={(e) => handleInputChange('da', e.target.value)}
+                        onFocus={(e) => e.target.select()}
                         className={inputClass}
                         min="0"
                     />
@@ -227,14 +245,13 @@ const CTCInput = ({
                         </Tooltip>
                     </label>
                     <Input
-                        type={inputMode === 'amount' ? 'text' : 'number'}
+                        type="text"
                         value={getInputValue('empPF')}
                         onChange={(e) => handleInputChange('empPF', e.target.value)}
+                        onFocus={(e) => e.target.select()}
                         className={inputClass}
                         min="0"
                     />
-
-
 
                     <label className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                         Special Allowance
@@ -248,6 +265,7 @@ const CTCInput = ({
                             : f_simple(results?.components?.special || 0)}
                         readOnly
                         className={inputClass}
+                        onFocus={(e) => e.target.select()}
                     />
 
                     {/* Show More / Show Less Button */}
@@ -279,9 +297,10 @@ const CTCInput = ({
                                 </label>
                             </div>
                             <Input
-                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                type="text"
                                 value={getInputValue('emplrPF')}
                                 onChange={(e) => handleInputChange('emplrPF', e.target.value)}
+                                onFocus={(e) => e.target.select()}
                                 className={inputClass}
                                 min="0"
                                 readOnly={true}
@@ -302,9 +321,10 @@ const CTCInput = ({
                                 </label>
                             </div>
                             <Input
-                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                type="text"
                                 value={getInputValue('gratuity')}
                                 onChange={(e) => handleInputChange('gratuity', e.target.value)}
+                                onFocus={(e) => e.target.select()}
                                 className={`${inputClass} ${!includeGratuity ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-800' : ''}`}
                                 min="0"
                                 disabled={!includeGratuity}
@@ -320,6 +340,7 @@ const CTCInput = ({
                                 type="text"
                                 value={formatIndianNumber(inputs.insurance)}
                                 onChange={(e) => handleInputChange('insurance', e.target.value)}
+                                onFocus={(e) => e.target.select()}
                                 className={inputClass}
                                 min="0"
                             />
@@ -331,9 +352,10 @@ const CTCInput = ({
                                 </Tooltip>
                             </label>
                             <Input
-                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                type="text"
                                 value={getInputValue('other')}
                                 onChange={(e) => handleInputChange('other', e.target.value)}
+                                onFocus={(e) => e.target.select()}
                                 className={inputClass}
                                 min="0"
                             />
@@ -345,9 +367,10 @@ const CTCInput = ({
                                 </Tooltip>
                             </label>
                             <Input
-                                type={inputMode === 'amount' ? 'text' : 'number'}
+                                type="text"
                                 value={getInputValue('nps')}
                                 onChange={(e) => handleInputChange('nps', e.target.value)}
+                                onFocus={(e) => e.target.select()}
                                 className={inputClass}
                                 min="0"
                             />
@@ -362,6 +385,7 @@ const CTCInput = ({
                                 type="text"
                                 value={formatIndianNumber(inputs.profTax)}
                                 onChange={(e) => handleInputChange('profTax', e.target.value)}
+                                onFocus={(e) => e.target.select()}
                                 className={inputClass}
                                 min="0"
                             />
