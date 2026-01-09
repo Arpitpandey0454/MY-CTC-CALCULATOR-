@@ -180,15 +180,25 @@ const CTCInput = ({
             <div className="space-y-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Salary Components</h3>
-                    <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
-                        <label className="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="inputMode" value="percentage" checked={inputMode === 'percentage'} onChange={() => handleModeChange('percentage')} className="h-4 w-4 text-teal-600 dark:text-teal-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 focus:ring-teal-500" />
-                            <span className="ml-1 text-sm text-gray-700 dark:text-gray-300">%</span>
-                        </label>
-                        <label className="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="inputMode" value="amount" checked={inputMode === 'amount'} onChange={() => handleModeChange('amount')} className="h-4 w-4 text-teal-600 dark:text-teal-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 focus:ring-teal-500" />
-                            <span className="ml-1 text-sm text-gray-700 dark:text-gray-300">₹</span>
-                        </label>
+                    <div className="flex bg-gray-200 dark:bg-gray-700 p-1 rounded-lg">
+                        <button
+                            onClick={() => handleModeChange('percentage')}
+                            className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${inputMode === 'percentage'
+                                ? 'bg-teal-600 text-white shadow'
+                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                        >
+                            % Percentage
+                        </button>
+                        <button
+                            onClick={() => handleModeChange('amount')}
+                            className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${inputMode === 'amount'
+                                ? 'bg-teal-600 text-white shadow'
+                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                        >
+                            ₹ Amount
+                        </button>
                     </div>
                 </div>
 
