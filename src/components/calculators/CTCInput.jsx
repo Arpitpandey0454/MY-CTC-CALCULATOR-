@@ -27,7 +27,11 @@ const CTCInput = ({
 
     const handleInputChange = (key, value) => {
         if (key === 'insurance' || key === 'profTax') {
-            updateInput(key, parseIndianNumber(value));
+            let val = parseIndianNumber(value);
+            if (key === 'profTax' && val > 2500) {
+                val = 2500;
+            }
+            updateInput(key, val);
             return;
         }
 

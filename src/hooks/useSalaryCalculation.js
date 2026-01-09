@@ -176,6 +176,8 @@ export const useSalaryCalculation = () => {
         let val = parseFloat(value);
         if (isNaN(val) || val < 0) val = 0; // No negatives
 
+        if (key === 'profTax' && val > 2500) val = 2500; // Max 2500 for Professional Tax
+
         // Prof Tax and Insurance are always Amount, so we don't apply % limits to them
         if (inputMode === 'percentage') {
             if (key !== 'profTax' && key !== 'insurance') {
