@@ -412,187 +412,190 @@ const CompareOffers = () => {
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    {/* Offer 1 */}
-                    <div className="border-2 border-gray-200 dark:border-teal-700 rounded-2xl p-6 bg-white dark:bg-teal-950/30">
-                        <h3 className="text-xl font-bold text-teal-900 dark:text-teal-100 mb-4">Offer 1</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CTC (₹)</label>
-                                <Input
-                                    type="text"
-                                    placeholder="50,00,000"
-                                    value={formatIndianNumber(offer1.ctc)}
-                                    onChange={(e) => {
-                                        let val = parseIndianNumber(e.target.value);
-                                        if (val > 100000000) val = 100000000;
-                                        setOffer1({ ...offer1, ctc: val });
-                                    }}
-                                />
-                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(offer1.ctc)}</p>
+                <div className="flex flex-col lg:flex-row gap-8">
+
+                    {/* Left Column: Inputs (Combined) */}
+                    <div className="w-full lg:w-1/2 space-y-6">
+
+                        {/* Single Container for Both Offers */}
+                        <div className="border border-gra-200 dark:border-gray-700/50 rounded-2xl p-6 bg-white dark:bg-gray-800/50 shadow-sm">
+
+                            {/* Offer 1 Section */}
+                            <div className="relative pl-4 border-l-4 border-teal-500 mb-8">
+                                <h3 className="text-xl font-bold text-teal-900 dark:text-teal-100 mb-4">Offer 1</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CTC (₹)</label>
+                                        <Input
+                                            type="text"
+                                            placeholder="50,00,000"
+                                            value={formatIndianNumber(offer1.ctc)}
+                                            onChange={(e) => {
+                                                let val = parseIndianNumber(e.target.value);
+                                                if (val > 100000000) val = 100000000;
+                                                setOffer1({ ...offer1, ctc: val });
+                                            }}
+                                        />
+                                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(offer1.ctc)}</p>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tax Regime</label>
+                                        <select
+                                            className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-3 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-teal-500"
+                                            value={offer1.regime}
+                                            onChange={(e) => setOffer1({ ...offer1, regime: e.target.value })}
+                                        >
+                                            <option value="new">New Regime</option>
+                                            <option value="old">Old Regime</option>
+                                        </select>
+                                    </div>
+                                    {renderAdvancedOptions(offer1, setOffer1, 'Offer 1')}
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tax Regime</label>
-                                <select
-                                    className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-3 text-gray-800 dark:text-gray-200"
-                                    value={offer1.regime}
-                                    onChange={(e) => setOffer1({ ...offer1, regime: e.target.value })}
-                                >
-                                    <option value="new">New Regime</option>
-                                    <option value="old">Old Regime</option>
-                                </select>
+
+                            {/* Divider with VS badge */}
+                            <div className="relative flex items-center justify-center mb-8 border-t border-dashed border-gray-300 dark:border-gray-600">
+                                <span className="absolute bg-gray-100 dark:bg-gray-800 px-3 py-1 text-xs font-bold text-gray-500 rounded-full uppercase tracking-widest">VS</span>
                             </div>
-                            {renderAdvancedOptions(offer1, setOffer1, 'Offer 1')}
+
+                            {/* Offer 2 Section */}
+                            <div className="relative pl-4 border-l-4 border-blue-500">
+                                <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-4">Offer 2</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CTC (₹)</label>
+                                        <Input
+                                            type="text"
+                                            placeholder="55,00,000"
+                                            value={formatIndianNumber(offer2.ctc)}
+                                            onChange={(e) => {
+                                                let val = parseIndianNumber(e.target.value);
+                                                if (val > 100000000) val = 100000000;
+                                                setOffer2({ ...offer2, ctc: val });
+                                            }}
+                                        />
+                                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(offer2.ctc)}</p>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tax Regime</label>
+                                        <select
+                                            className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-3 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500"
+                                            value={offer2.regime}
+                                            onChange={(e) => setOffer2({ ...offer2, regime: e.target.value })}
+                                        >
+                                            <option value="new">New Regime</option>
+                                            <option value="old">Old Regime</option>
+                                        </select>
+                                    </div>
+                                    {renderAdvancedOptions(offer2, setOffer2, 'Offer 2')}
+                                </div>
+                            </div>
+
                         </div>
+
+                        <Button onClick={handleCompare} variant="gradient" className="w-full py-3 text-lg shadow-lg hover:shadow-xl transition-all">Compare Offers</Button>
                     </div>
 
-                    {/* Offer 2 */}
-                    <div className="border-2 border-gray-200 dark:border-blue-700 rounded-2xl p-6 bg-white dark:bg-blue-950/30">
-                        <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-4">Offer 2</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CTC (₹)</label>
-                                <Input
-                                    type="text"
-                                    placeholder="55,00,000"
-                                    value={formatIndianNumber(offer2.ctc)}
-                                    onChange={(e) => {
-                                        let val = parseIndianNumber(e.target.value);
-                                        if (val > 100000000) val = 100000000;
-                                        setOffer2({ ...offer2, ctc: val });
-                                    }}
-                                />
-                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{numberToWordsIndian(offer2.ctc)}</p>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tax Regime</label>
-                                <select
-                                    className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-3 text-gray-800 dark:text-gray-200"
-                                    value={offer2.regime}
-                                    onChange={(e) => setOffer2({ ...offer2, regime: e.target.value })}
-                                >
-                                    <option value="new">New Regime</option>
-                                    <option value="old">Old Regime</option>
-                                </select>
-                            </div>
-                            {renderAdvancedOptions(offer2, setOffer2, 'Offer 2')}
-                        </div>
-                    </div>
-                </div>
+                    {/* Right Column: Results (Combined) */}
+                    <div className="w-full lg:w-1/2">
+                        <div className="sticky top-8 space-y-6 animate-fadeIn">
+                            {results ? (
+                                <div className="border border-gray-200 dark:border-gray-700/50 rounded-2xl p-6 bg-white dark:bg-gray-800/50 shadow-sm">
+                                    {/* Summary Banner */}
+                                    <div className={`p-6 rounded-2xl text-center border-2 border-dashed mb-6 ${results.diff.inHand > 0
+                                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700'
+                                        : results.diff.inHand < 0
+                                            ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-300 dark:border-teal-700'
+                                            : 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600'
+                                        }`}>
+                                        <p className="text-gray-600 dark:text-gray-300 font-medium mb-1 uppercase tracking-wider text-xs">Recommendation</p>
+                                        <h2 className={`text-2xl font-bold ${results.diff.inHand > 0
+                                            ? 'text-blue-700 dark:text-blue-400'
+                                            : results.diff.inHand < 0
+                                                ? 'text-teal-700 dark:text-teal-400'
+                                                : 'text-gray-700 dark:text-gray-300'
+                                            }`}>
+                                            {results.diff.inHand > 0 ? 'Offer 2 is Better' : results.diff.inHand < 0 ? 'Offer 1 is Better' : 'Both Offers are Equal'}
+                                        </h2>
+                                        {Math.abs(results.diff.inHand) > 0 && (
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                                Extra <strong>{f_simple(Math.abs(results.diff.inHand))}</strong> /yr with {results.diff.inHand > 0 ? 'Offer 2' : 'Offer 1'}.
+                                            </p>
+                                        )}
+                                    </div>
 
-                <Button onClick={handleCompare} variant="gradient" className="w-full mb-8">Compare Offers</Button>
+                                    <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm bg-gray-50/50 dark:bg-gray-900/50">
+                                        <table className="w-full text-sm text-left">
+                                            <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-bold uppercase text-xs">
+                                                <tr>
+                                                    <th className="px-4 py-3">Metric</th>
+                                                    <th className="px-4 py-3 text-right text-teal-700 dark:text-teal-400">Offer 1</th>
+                                                    <th className="px-4 py-3 text-right text-blue-700 dark:text-blue-400">Offer 2</th>
+                                                    <th className="px-4 py-3 text-right">Diff</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                                {/* CTC */}
+                                                <tr className="hover:bg-white dark:hover:bg-gray-800 transition-colors">
+                                                    <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">CTC</td>
+                                                    <td className="px-4 py-3 text-right font-medium">{f_simple(offer1.ctc)}</td>
+                                                    <td className="px-4 py-3 text-right font-medium">{f_simple(offer2.ctc)}</td>
+                                                    <td className={`px-4 py-3 text-right font-bold ${results.diff.ctc > 0 ? 'text-green-600' : results.diff.ctc < 0 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                        {results.diff.ctc > 0 ? '+' : ''}{f_simple(results.diff.ctc)}
+                                                    </td>
+                                                </tr>
 
-                {/* Comparison Results */}
-                {results && (
-                    <div className="space-y-6">
-                        <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold uppercase text-xs">
-                                    <tr>
-                                        <th className="px-6 py-4">Metric</th>
-                                        <th className="px-6 py-4 text-teal-700 dark:text-teal-400 bg-teal-50/50 dark:bg-teal-900/20">Offer 1</th>
-                                        <th className="px-6 py-4 text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20">Offer 2</th>
-                                        <th className="px-6 py-4 text-center">Difference</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900/40">
-                                    {/* CTC */}
-                                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">Annual CTC (Input)</td>
-                                        <td className="px-6 py-4 text-teal-900 dark:text-teal-100 font-semibold bg-teal-50/30 dark:bg-teal-900/10">
-                                            {f_simple(offer1.ctc)}
-                                        </td>
-                                        <td className="px-6 py-4 text-blue-900 dark:text-blue-100 font-semibold bg-blue-50/30 dark:bg-blue-900/10">
-                                            {f_simple(offer2.ctc)}
-                                        </td>
-                                        <td className={`px-6 py-4 text-center font-bold ${results.diff.ctc > 0 ? 'text-green-600 dark:text-green-400' : results.diff.ctc < 0 ? 'text-red-500 dark:text-red-400' : 'text-gray-500'}`}>
-                                            {results.diff.ctc > 0 ? '+' : ''}{f_simple(results.diff.ctc)}
-                                        </td>
-                                    </tr>
+                                                {/* Gross Salary */}
+                                                <tr className="hover:bg-white dark:hover:bg-gray-800 transition-colors">
+                                                    <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">Gross Salary</td>
+                                                    <td className="px-4 py-3 text-right">{f_simple(results.offer1.grossSalary)}</td>
+                                                    <td className="px-4 py-3 text-right">{f_simple(results.offer2.grossSalary)}</td>
+                                                    <td className="px-4 py-3 text-right text-gray-400">-</td>
+                                                </tr>
 
-                                    {/* Gross Salary */}
-                                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">Gross Salary</td>
-                                        <td className="px-6 py-4 text-gray-800 dark:text-gray-200 bg-teal-50/30 dark:bg-teal-900/10">
-                                            {f_simple(results.offer1.grossSalary)}
-                                        </td>
-                                        <td className="px-6 py-4 text-gray-800 dark:text-gray-200 bg-blue-50/30 dark:bg-blue-900/10">
-                                            {f_simple(results.offer2.grossSalary)}
-                                        </td>
-                                        <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                            -
-                                        </td>
-                                    </tr>
+                                                {/* Deductions */}
+                                                <tr className="hover:bg-white dark:hover:bg-gray-800 transition-colors">
+                                                    <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">Deductions</td>
+                                                    <td className="px-4 py-3 text-right text-red-600 dark:text-red-400">{f_simple(results.offer1.totalDeductions)}</td>
+                                                    <td className="px-4 py-3 text-right text-red-600 dark:text-red-400">{f_simple(results.offer2.totalDeductions)}</td>
+                                                    <td className="px-4 py-3 text-right text-gray-400">-</td>
+                                                </tr>
 
-                                    {/* Deductions */}
-                                    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                        <td className="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">Total Deductions</td>
-                                        <td className="px-6 py-4 text-red-600/80 dark:text-red-400/80 bg-teal-50/30 dark:bg-teal-900/10">
-                                            {f_simple(results.offer1.totalDeductions)}
-                                        </td>
-                                        <td className="px-6 py-4 text-red-600/80 dark:text-red-400/80 bg-blue-50/30 dark:bg-blue-900/10">
-                                            {f_simple(results.offer2.totalDeductions)}
-                                        </td>
-                                        <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                            -
-                                        </td>
-                                    </tr>
+                                                {/* Net In-Hand Yearly */}
+                                                <tr className="bg-white dark:bg-gray-800 font-bold border-t-2 border-gray-200 dark:border-gray-600">
+                                                    <td className="px-4 py-3 text-gray-900 dark:text-white">Net (Annual)</td>
+                                                    <td className="px-4 py-3 text-right text-teal-700 dark:text-teal-400">{f_simple(results.offer1.netInHandYearly)}</td>
+                                                    <td className="px-4 py-3 text-right text-blue-700 dark:text-blue-400">{f_simple(results.offer2.netInHandYearly)}</td>
+                                                    <td className={`px-4 py-3 text-right ${results.diff.inHand > 0 ? 'text-green-600' : results.diff.inHand < 0 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                        {results.diff.inHand > 0 ? '+' : ''}{f_simple(results.diff.inHand)}
+                                                    </td>
+                                                </tr>
 
-                                    {/* Net In-Hand Yearly */}
-                                    <tr className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 font-bold border-t-2 border-gray-100 dark:border-gray-700">
-                                        <td className="px-6 py-4 text-gray-900 dark:text-white">Net In-Hand (Yearly)</td>
-                                        <td className="px-6 py-4 text-teal-700 dark:text-teal-400 text-lg bg-teal-50/50 dark:bg-teal-900/20 shadow-inner">
-                                            {f_simple(results.offer1.netInHandYearly)}
-                                        </td>
-                                        <td className="px-6 py-4 text-blue-700 dark:text-blue-400 text-lg bg-blue-50/50 dark:bg-blue-900/20 shadow-inner">
-                                            {f_simple(results.offer2.netInHandYearly)}
-                                        </td>
-                                        <td className={`px-6 py-4 text-center text-lg ${results.diff.inHand > 0 ? 'text-green-600 dark:text-green-400' : results.diff.inHand < 0 ? 'text-red-500 dark:text-red-400' : 'text-gray-400'}`}>
-                                            {results.diff.inHand > 0 ? '+' : ''}{f_simple(results.diff.inHand)}
-                                        </td>
-                                    </tr>
-
-                                    {/* Net In-Hand Monthly */}
-                                    <tr className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 font-bold">
-                                        <td className="px-6 py-4 text-gray-900 dark:text-white border-b-0">Net In-Hand (Monthly)</td>
-                                        <td className="px-6 py-4 text-teal-700 dark:text-teal-400 text-lg bg-teal-50/50 dark:bg-teal-900/20 shadow-inner border-b-0">
-                                            {f_simple(results.offer1.netInHandMonthly)}
-                                        </td>
-                                        <td className="px-6 py-4 text-blue-700 dark:text-blue-400 text-lg bg-blue-50/50 dark:bg-blue-900/20 shadow-inner border-b-0">
-                                            {f_simple(results.offer2.netInHandMonthly)}
-                                        </td>
-                                        <td className={`px-6 py-4 text-center text-lg border-b-0 ${results.diff.monthly > 0 ? 'text-green-600 dark:text-green-400' : results.diff.monthly < 0 ? 'text-red-500 dark:text-red-400' : 'text-gray-400'}`}>
-                                            {results.diff.monthly > 0 ? '+' : ''}{f_simple(results.diff.monthly)}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Summary Banner */}
-                        <div className={`p-6 rounded-2xl text-center border ${results.diff.inHand > 0
-                            ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
-                            : results.diff.inHand < 0
-                                ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800'
-                                : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-                            }`}>
-                            <p className="text-gray-600 dark:text-gray-300 font-medium mb-1">Recommendation</p>
-                            <p className={`text-2xl font-bold ${results.diff.inHand > 0
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : results.diff.inHand < 0
-                                    ? 'text-teal-600 dark:text-teal-400'
-                                    : 'text-gray-600 dark:text-gray-400'
-                                }`}>
-                                {results.diff.inHand > 0 ? 'Offer 2 is Financially Better' : results.diff.inHand < 0 ? 'Offer 1 is Financially Better' : 'Both Offers are Equal'}
-                            </p>
-                            {Math.abs(results.diff.inHand) > 0 && (
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                    You will earn approximately <strong>{f_simple(Math.abs(results.diff.inHand))}</strong> more yearly with {results.diff.inHand > 0 ? 'Offer 2' : 'Offer 1'}.
-                                </p>
+                                                {/* Net In-Hand Monthly */}
+                                                <tr className="bg-white dark:bg-gray-800 font-bold">
+                                                    <td className="px-4 py-3 text-gray-900 dark:text-white">Net (Monthly)</td>
+                                                    <td className="px-4 py-3 text-right text-teal-700 dark:text-teal-400">{f_simple(results.offer1.netInHandMonthly)}</td>
+                                                    <td className="px-4 py-3 text-right text-blue-700 dark:text-blue-400">{f_simple(results.offer2.netInHandMonthly)}</td>
+                                                    <td className={`px-4 py-3 text-right ${results.diff.monthly > 0 ? 'text-green-600' : results.diff.monthly < 0 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                        {results.diff.monthly > 0 ? '+' : ''}{f_simple(results.diff.monthly)}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-gray-500 bg-white/50 dark:bg-gray-800/30 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                                    <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-full mb-4">
+                                        <HelpCircle size={48} className="text-gray-400" />
+                                    </div>
+                                    <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">Ready to Compare</h3>
+                                    <p className="text-sm max-w-xs text-center mt-2">Enter CTC details for both offers and click "Compare Offers" to see the detailed breakdown here.</p>
+                                </div>
                             )}
                         </div>
                     </div>
-                )}
+                </div>
             </div>
             <ShareModal
                 isOpen={isShareModalOpen}
