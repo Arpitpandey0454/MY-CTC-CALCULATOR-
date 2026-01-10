@@ -98,7 +98,7 @@ const CTCCalculator = () => {
     return (
         <div className="max-w-5xl mx-auto mb-3">
             {/* Main Container Card */}
-            <div id="ctc-calculator-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+            <div id="ctc-calculator-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-4 sm:p-6 lg:p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
 
                 {/* Header Section */}
                 <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

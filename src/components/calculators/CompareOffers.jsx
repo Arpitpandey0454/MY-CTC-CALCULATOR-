@@ -376,7 +376,7 @@ const CompareOffers = () => {
 
     return (
         <div className="max-w-5xl mx-auto mb-3">
-            <div id="compare-offers-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+            <div id="compare-offers-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-4 sm:p-6 lg:p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
                     <div>
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-700 via-teal-600 to-blue-600 bg-clip-text text-transparent dark:from-teal-200 dark:via-cyan-200 dark:to-blue-200 mb-2">Compare CTC Offers</h1>

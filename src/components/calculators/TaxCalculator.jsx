@@ -399,7 +399,7 @@ const TaxCalculator = () => {
     return (
         <div className="max-w-5xl mx-auto mb-3">
             {/* Main Container Card */}
-            <div id="tax-calculator-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
+            <div id="tax-calculator-container" className="bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-white/50 dark:border-gray-800 rounded-3xl p-4 sm:p-6 lg:p-10 shadow-[0_8px_25px_rgba(0,0,0,0.06)]">
 
                 {/* Header Section */}
                 <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -587,7 +587,7 @@ const TaxCalculator = () => {
                             <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Tax Summary</h3>
 
-                                <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 mb-6 bg-white dark:bg-gray-900">
+                                <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 mb-6 bg-white dark:bg-gray-900">
                                     <table className="w-full text-xs text-left">
                                         <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-semibold">
                                             <tr>
